@@ -1,0 +1,27 @@
+*,
+::after,
+::before {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+/* COLORS */
+:root {
+	--main-color: #8dc6ff;
+	--main-light: #e4f1fe;
+	--dark-color: #22313f;
+	--dark-light: #34495e;
+}
+body {
+	font-family: "Roboto", sans-serif;
+	background-color: var(--main-light);
+	color: var(--dark-color);
+}
+
+/* UTILITIES */
+.font_en {
+	font-family: "Roboto", sans-serif;
+}
+.font_bn {
+	font-family: "Hind Siliguri", sans-serif;
+}
