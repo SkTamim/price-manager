@@ -17,10 +17,11 @@ const ProductsTable = () => {
 						<TableCell align='left'>SL No.</TableCell>
 						<TableCell align='center'>Product Image</TableCell>
 						<TableCell align='center'>Product Name</TableCell>
-						<TableCell align='center'>Buying Price</TableCell>
-						<TableCell align='center'>Selling Price </TableCell>
+						<TableCell align='center'>Buying Price (₹)</TableCell>
+						<TableCell align='center'>Selling Price (₹)</TableCell>
 						<TableCell align='center'>Buying Point </TableCell>
-						<TableCell align='center'>Action Tab </TableCell>
+						<TableCell align='center'>Date </TableCell>
+						<TableCell align='right'>Action Tab </TableCell>
 					</TableRow>
 				</TableHead>
 

@@ -14,6 +14,7 @@ function App() {
 					align='center'
 					textTransform='uppercase'
 					fontWeight='bold'
+					marginBottom='20px'
 				>
 					Products
 				</Typography>

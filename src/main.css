@@ -23,5 +23,8 @@ body {
 	font-family: "Roboto", sans-serif;
 }
 .font_bn {
-	font-family: "Hind Siliguri", sans-serif;
+	font-family: "Baloo Da 2", sans-serif !important;
+}
+img {
+	max-width: 100%;
 }
