@@ -1,6 +1,7 @@
 import { Container, Typography } from "@mui/material";
 
 import SearchBar from "./components/SearchBar";
+import ProductsTable from "./components/ProductsTable";
 
 function App() {
 	return (
@@ -16,6 +17,7 @@ function App() {
 				>
 					Products
 				</Typography>
+				<ProductsTable />
 			</Container>
 		</>
 	);
