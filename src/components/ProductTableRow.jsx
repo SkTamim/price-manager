@@ -3,6 +3,7 @@ import kodal from "../assets/kodal.webp";
 import { Edit, History } from "@mui/icons-material";
 import { useState } from "react";
 import ProductEditModal from "./ProductEditModal";
+import { Link } from "react-router-dom";
 
 const ProductTableRow = () => {
 	const rows = [1];
@@ -67,6 +68,8 @@ const ProductTableRow = () => {
 									color: "#34495E",
 									borderColor: "#34495E",
 								}}
+								component={Link}
+								to='/price-history'
 							>
 								History
 							</Button>
