@@ -1,26 +1,15 @@
-import { Container, Typography } from "@mui/material";
-
-import SearchBar from "./components/SearchBar";
-import ProductsTable from "./components/ProductsTable";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Home from "./pages/Home.jsx";
+import PriceHistory from "./pages/PriceHistory.jsx";
 
 function App() {
 	return (
-		<>
-			<SearchBar />
-			<Container maxWidth='xl' sx={{ py: 2 }}>
-				<Typography
-					component='h1'
-					variant='h4'
-					align='center'
-					textTransform='uppercase'
-					fontWeight='bold'
-					marginBottom='20px'
-				>
-					Products
-				</Typography>
-				<ProductsTable />
-			</Container>
-		</>
+		<BrowserRouter basename='/'>
+			<Routes>
+				<Route path='/' element={<Home />} />
+				<Route path='/price-history' element={<PriceHistory />} />
+			</Routes>
+		</BrowserRouter>
 	);
 }
 
