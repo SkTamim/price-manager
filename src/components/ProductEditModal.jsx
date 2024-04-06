@@ -18,7 +18,7 @@ export default function AlertDialog({ handleClose, open, editData }) {
 				{editData && (
 					<DialogContent
 						sx={{
-							width: "600px",
+							maxWidth: "600px",
 						}}
 					>
 						<form style={{ width: "100%" }}>

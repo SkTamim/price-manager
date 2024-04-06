@@ -1,5 +1,5 @@
 import { Button, Stack, TableCell, TableRow } from "@mui/material";
-import dummyProductImg from "../assets/product.png";
+import dummyProductImg from "../assets/images/product.png";
 import { Edit, History } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import ProductEditModal from "./ProductEditModal";

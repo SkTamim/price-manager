@@ -1,5 +1,5 @@
 import { TableCell, TableRow } from "@mui/material";
-import kodal from "../assets/kodal.webp";
+import kodal from "../assets/images/kodal.webp";
 
 const ProductTableRow = () => {
 	const rows = [1];
