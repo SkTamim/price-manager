@@ -97,7 +97,9 @@ function AddProductForm() {
 		if (nameErr || bPriceErr || sPriceErr || bPointErr) {
 			handleClickOpen();
 		} else {
-			submitForm(e, state);
+			let date = new Date();
+			date = date.toLocaleDateString();
+			submitForm({ ...state, date: date });
 			resetForm();
 		}
 	}

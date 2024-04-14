@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material";
-import ProductsTable from "../components/ProductsTable";
+import ProductsTable from "../components/products/ProductsTable";
 
 function Products() {
 	return (
