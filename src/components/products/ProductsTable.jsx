@@ -6,7 +6,7 @@ import {
 	TableHead,
 	TableRow,
 } from "@mui/material";
-import ProductTableRow from "./ProductTableRow";
+import ProductTableRow from "../products/ProductTableRow";
 
 const ProductsTable = () => {
 	return (

@@ -1,5 +1,5 @@
 import { Button, Container, Stack, Typography } from "@mui/material";
-import PriceHistoryTable from "../components/PriceHistoryTable";
+import PriceHistoryTable from "../components/priceHistory/PriceHistoryTable";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { Link } from "react-router-dom";
 
