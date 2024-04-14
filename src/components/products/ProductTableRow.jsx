@@ -6,17 +6,10 @@ import ProductEditModal from "../products/ProductEditModal";
 import { Link } from "react-router-dom";
 
 //Firebase
-import { app } from "../../firebase";
-import {
-	collection,
-	getDocs,
-	getFirestore,
-	query,
-	where,
-} from "firebase/firestore";
+import { database } from "../../firebase/FirebaseConfig";
+import { collection, getDocs, query, where } from "firebase/firestore";
 
-const db = getFirestore(app);
-const q = query(collection(db, "products"));
+const q = query(collection(database, "products"));
 
 const ProductTableRow = () => {
 	const [data, setData] = useState([]);
@@ -32,7 +25,7 @@ const ProductTableRow = () => {
 	}
 
 	async function getDocument(id) {
-		const q = query(collection(db, "products"), where("id", "==", id));
+		const q = query(collection(database, "products"), where("id", "==", id));
 		const querySnapshot = await getDocs(q);
 		querySnapshot.forEach((doc) => {
 			setEditData(doc.data());
@@ -66,7 +59,7 @@ const ProductTableRow = () => {
 						</TableCell>
 						<TableCell align='center' sx={{ width: "150px", height: "150px" }}>
 							<img
-								src={product.img || dummyProductImg}
+								src={product.image || dummyProductImg}
 								alt='Product Image'
 								style={{ border: "1px solid #34495E", borderRadius: "2px" }}
 							/>
