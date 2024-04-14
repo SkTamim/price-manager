@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { CameraAlt } from "@mui/icons-material";
+import { CameraAlt, CameraswitchOutlined } from "@mui/icons-material";
 import {
 	Button,
 	Dialog,
@@ -10,15 +10,25 @@ import {
 import { useRef, useState } from "react";
 import Webcam from "react-webcam";
 
-const videoConstraints = {
-	width: 150,
-	height: 150,
-	facingMode: "user",
-};
 function CaptureImage({ getCapturedFile }) {
 	const [open, setOpen] = useState(false);
 	const [img, setImg] = useState(null);
 	const webcamRef = useRef(null);
+
+	const [cameraFace, setCameraFace] = useState("user");
+	function flipCamera() {
+		if (cameraFace == "user") {
+			setCameraFace("environment");
+		} else {
+			setCameraFace("user");
+		}
+	}
+
+	const videoConstraints = {
+		width: 150,
+		height: 150,
+		facingMode: { exact: cameraFace },
+	};
 
 	const capture = () => {
 		setImg(webcamRef.current.getScreenshot());
@@ -79,6 +89,15 @@ function CaptureImage({ getCapturedFile }) {
 						width={150}
 						videoConstraints={videoConstraints}
 					/>
+					<Button
+						variant='outlined'
+						color='primary'
+						sx={{ mt: 2 }}
+						onClick={flipCamera}
+					>
+						Flip Camera
+						<CameraswitchOutlined sx={{ ml: 1 }} />
+					</Button>
 					{img && (
 						<img
 							src={img}
