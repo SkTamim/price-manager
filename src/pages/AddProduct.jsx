@@ -1,5 +1,21 @@
+import { Typography } from "@mui/material";
+import AddProductForm from "../components/addProductPage/AddProductForm";
 function AddProduct() {
-	return <h1>AddProducts</h1>;
+	return (
+		<>
+			<Typography
+				component='h1'
+				variant='h4'
+				align='center'
+				textTransform='uppercase'
+				fontWeight='bold'
+				marginY={2}
+			>
+				Add Product
+			</Typography>
+			<AddProductForm />
+		</>
+	);
 }
 
 export default AddProduct;
