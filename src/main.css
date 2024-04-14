@@ -28,3 +28,9 @@ body {
 img {
 	max-width: 100%;
 }
+.nav-link.active {
+	text-decoration: underline !important;
+	text-underline-offset: 7px;
+	text-decoration-color: var(--main-color) !important;
+	text-decoration-thickness: 2px;
+}
