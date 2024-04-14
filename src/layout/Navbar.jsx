@@ -107,7 +107,7 @@ export default function SearchBar() {
 						<ListItem disablePadding>
 							<ListItemButton
 								component={NavLink}
-								to='add-products'
+								to='add-product'
 								className='nav-link'
 							>
 								<ListItemText primary='Add Products' />
