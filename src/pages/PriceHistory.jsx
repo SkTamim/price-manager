@@ -23,7 +23,7 @@ const PriceHistory = () => {
 							// top: "25px",
 						}}
 						component={Link}
-						to='/'
+						to='/products'
 					>
 						Back
 					</Button>
