@@ -10,21 +10,24 @@ import {
 import { database, storage } from "../../firebase/FirebaseConfig";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import Compressor from "compressorjs";
+import { v4 } from "uuid";
 
 const databaseReference = collection(database, "products");
 
-export function submitForm(data) {
-	console.log(data);
+export function submitForm(data, isSuccess) {
 	let mainData;
 
 	// Add data to firebase
 	const addData = async (dataObject) => {
 		await setDoc(doc(database, "products", dataObject.id), dataObject);
+
+		//Send Success massege
+		isSuccess(true);
 	};
 
-	// Add image to firebase storage function
+	// Add image to firebase storage function_
 	const addImage = (image) => {
-		const filePathRef = ref(storage, `products/${image.name}`);
+		const filePathRef = ref(storage, `products/${image.name}${v4()}`);
 		uploadBytes(filePathRef, image).then(() => {
 			console.log("image uploaded");
 
@@ -34,13 +37,10 @@ export function submitForm(data) {
 					// Add data to firestore
 					mainData = { ...mainData, image: url };
 					addData(mainData);
-
-					// Send Succsed massege
-					// isSuccess(true);
 				})
 				.catch((error) => {
 					console.log("Getting error form getDownloadURL function " + error);
-					// isSuccess(false);
+					isSuccess(false);
 				});
 		});
 	};
@@ -64,19 +64,27 @@ export function submitForm(data) {
 					}
 
 					mainData = { ...data, id: currentDataId };
-					if (data.image.name) {
-						// Compress the image=============
-						new Compressor(data.image, {
-							quality: 0.2,
-							success(compressedImg) {
-								// Add Compressed Image to firebase storage
-								addImage(compressedImg);
-							},
-							error(err) {
-								console.log("Getting error form Compressor Class " + err);
-								// isSuccess(false);
-							},
-						});
+					if (data.image) {
+						if (data.image.name) {
+							// Compress the image=============
+							new Compressor(data.image, {
+								quality: 0,
+								resize: "cover",
+								width: "150px",
+								height: "150px",
+								success(compressedImg) {
+									// Add Compressed Image to firebase storage
+									addImage(compressedImg);
+								},
+								error(err) {
+									console.log("Getting error form Compressor Class " + err);
+									isSuccess(false);
+								},
+							});
+						} else {
+							mainData = { ...data, id: currentDataId };
+							addData(mainData);
+						}
 					} else {
 						mainData = { ...data, id: currentDataId };
 						addData(mainData);
@@ -87,14 +95,17 @@ export function submitForm(data) {
 					if (data.image.name) {
 						// Compress the image=============
 						new Compressor(data.image, {
-							quality: 0.2,
+							quality: 0,
+							resize: "cover",
+							width: "150px",
+							height: "150px",
 							success(compressedImg) {
 								// Add Compressed Image to firebase storage
 								addImage(compressedImg);
 							},
 							error(err) {
 								console.log("Getting error form Compressor Class " + err);
-								// isSuccess(false);
+								isSuccess(false);
 							},
 						});
 					} else {
@@ -104,6 +115,7 @@ export function submitForm(data) {
 			})
 			.catch((err) => {
 				console.log("Getting error form getLastId function" + err);
+				isSuccess(false);
 			});
 	}
 	getLastDataID();

@@ -10,6 +10,8 @@ import {
 import AddImageInput from "./AddImageInput";
 import { useReducer, useState } from "react";
 import { submitForm } from "./SubmitForm";
+import SendIcon from "@mui/icons-material/Send";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 const INITIAL_STATE = {
 	name: "",
@@ -51,6 +53,18 @@ function AddProductForm() {
 	};
 	// End ===================
 
+	const [btnLoading, setBtnLoading] = useState(false);
+	const [success, setSuccess] = useState(false);
+
+	const [submitOpen, setSubmitOpen] = useState(false);
+	const handleSubmitClickOpen = () => {
+		setSubmitOpen(true);
+	};
+
+	const handleSubmitClose = () => {
+		setSubmitOpen(false);
+	};
+
 	const [state, dispatch] = useReducer(formReducer, INITIAL_STATE);
 	const [formError, setFormError] = useState({});
 
@@ -72,6 +86,7 @@ function AddProductForm() {
 		dispatch({ type: "RESET_INPUT" });
 	}
 
+	const [resetImage, setResetImage] = useState(false);
 	function getImage(img) {
 		dispatch({
 			type: "AAD_IMAGE",
@@ -82,6 +97,7 @@ function AddProductForm() {
 	}
 	function submitFormData(e) {
 		e.preventDefault();
+		setBtnLoading(true);
 		let nameErr = state.name.length <= 0;
 		let bPriceErr = state.buyingPrice.length <= 0;
 		let sPriceErr = state.sellingPrice.length <= 0;
@@ -96,13 +112,32 @@ function AddProductForm() {
 
 		if (nameErr || bPriceErr || sPriceErr || bPointErr) {
 			handleClickOpen();
+			setBtnLoading(false);
 		} else {
 			let date = new Date();
 			date = date.toLocaleDateString();
-			submitForm({ ...state, date: date });
-			resetForm();
+			submitForm({ ...state, date: date }, isSuccess);
+			setResetImage(true);
 		}
 	}
+	const isSuccess = (isSubmitted) => {
+		setSuccess(isSubmitted);
+		console.log(isSubmitted);
+		setBtnLoading(!isSubmitted);
+		if (isSubmitted === true) {
+			resetForm();
+			setResetImage(false);
+			submitFeedback();
+		} else {
+			submitFeedback();
+		}
+	};
+
+	function submitFeedback() {
+		handleSubmitClickOpen();
+		setBtnLoading(false);
+	}
+
 	return (
 		<>
 			<Container
@@ -169,8 +204,8 @@ function AddProductForm() {
 					helperText={formError.buyingPoint && "Please give a buying point"}
 				/>
 
-				<AddImageInput getImage={getImage} resetImg={state.image} />
-				<Button
+				<AddImageInput getImage={getImage} resetImg={resetImage} />
+				<LoadingButton
 					variant='contained'
 					size='lg'
 					type='submit'
@@ -185,9 +220,12 @@ function AddProductForm() {
 							backgroundColor: "#0F87FF",
 						},
 					}}
+					endIcon={<SendIcon />}
+					loading={btnLoading}
+					loadingPosition='end'
 				>
 					Submit
-				</Button>
+				</LoadingButton>
 			</Container>
 
 			{/* FORM IS NOT FILLED PROPERLY ERROR DIALOG BOX */}
@@ -206,6 +244,38 @@ function AddProductForm() {
 				</DialogContent>
 				<DialogActions sx={{ p: 0 }}>
 					<Button onClick={handleClose} autoFocus fullWidth color='success'>
+						Okey
+					</Button>
+				</DialogActions>
+			</Dialog>
+
+			{/* FORM SUBMITTED DIALOG BOX */}
+			<Dialog open={submitOpen} onClose={handleSubmitClose}>
+				<DialogContent
+					sx={{
+						p: 0,
+						minWidth: {
+							sm: "400px",
+						},
+					}}
+				>
+					{success ? (
+						<Alert severity='success' sx={{ justifyContent: "center" }}>
+							Your form is submitted successfully
+						</Alert>
+					) : (
+						<Alert severity='error' sx={{ justifyContent: "center" }}>
+							Unfortunately, Your form is not submitted, Please resubmit.
+						</Alert>
+					)}
+				</DialogContent>
+				<DialogActions sx={{ p: 0 }}>
+					<Button
+						onClick={handleSubmitClose}
+						autoFocus
+						fullWidth
+						color='success'
+					>
 						Okey
 					</Button>
 				</DialogActions>

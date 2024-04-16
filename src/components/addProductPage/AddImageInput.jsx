@@ -2,7 +2,7 @@
 import { Button, Stack, styled, ButtonGroup } from "@mui/material";
 import Input from "@mui/joy/Input";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CaptureImage from "./CaptureImage";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
@@ -21,6 +21,18 @@ function AddImageInput({ getImage, resetImg }) {
 	const [uploadFile, setUploadFile] = useState(null);
 	const [imgFileName, setImgFileName] = useState("");
 
+	const fileInputRef = useRef();
+	function resetImage() {
+		if (resetImg) {
+			setUploadFile(null);
+			setImgFileName("");
+			fileInputRef.current.value = null;
+		}
+	}
+	useEffect(() => {
+		resetImage();
+	}, [resetImg]);
+
 	function file(e) {
 		setUploadFile(e.target.files[0]);
 		setImgFileName(e.target.files[0].name);
@@ -33,7 +45,7 @@ function AddImageInput({ getImage, resetImg }) {
 
 	useEffect(() => {
 		getImage(uploadFile);
-	}, [uploadFile]);
+	}, [uploadFile, getImage]);
 
 	return (
 		<Stack
@@ -59,7 +71,12 @@ function AddImageInput({ getImage, resetImg }) {
 					}}
 				>
 					Upload file
-					<VisuallyHiddenInput type='file' onChange={file} accept='image/*' />
+					<VisuallyHiddenInput
+						type='file'
+						onChange={file}
+						accept='image/*'
+						ref={fileInputRef}
+					/>
 				</Button>
 				<CaptureImage getCapturedFile={getCapturedFile} />
 			</ButtonGroup>
@@ -79,9 +96,9 @@ function AddImageInput({ getImage, resetImg }) {
 						sm: "69.3%",
 					},
 				}}
-				value={resetImg ? imgFileName : ""}
+				value={imgFileName}
 				endDecorator={
-					resetImg && imgFileName && <CheckCircleIcon sx={{ color: "green" }} />
+					imgFileName && <CheckCircleIcon sx={{ color: "green" }} />
 				}
 			/>
 		</Stack>
