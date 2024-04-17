@@ -1,9 +1,10 @@
-import { Button, Stack, TableCell, TableRow } from "@mui/material";
+import { Box, Button, Stack, TableCell, TableRow } from "@mui/material";
 import dummyProductImg from "../../assets/images/product.png";
 import { Edit, History } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import ProductEditModal from "../products/ProductEditModal";
 import { Link } from "react-router-dom";
+import Loading from "../UI/Loading";
 
 //Firebase
 import { database } from "../../firebase/FirebaseConfig";
@@ -46,9 +47,18 @@ const ProductTableRow = () => {
 		setOpen(false);
 	};
 
+	let dataIsLoading = data.length <= 0;
+
 	return (
 		<>
-			{data &&
+			{dataIsLoading && (
+				<Box sx={{ width: "100%", height: "60vh" }} component='tr'>
+					<td colSpan='8' align='center'>
+						<Loading size={100} thickness={1} />
+					</td>
+				</Box>
+			)}
+			{!dataIsLoading &&
 				data.map((product) => (
 					<TableRow
 						key={product.id}
@@ -57,13 +67,7 @@ const ProductTableRow = () => {
 						<TableCell component='th' scope='row' sx={{ fontWeight: "bold" }}>
 							{product.id}
 						</TableCell>
-						<TableCell align='center' sx={{ width: "150px", height: "150px" }}>
-							<img
-								src={product.image || dummyProductImg}
-								alt='Product Image'
-								style={{ border: "1px solid #34495E", borderRadius: "2px" }}
-							/>
-						</TableCell>
+
 						<TableCell
 							align='center'
 							className='font_bn'
@@ -75,6 +79,13 @@ const ProductTableRow = () => {
 						<TableCell align='center'>{product.sellingPrice}</TableCell>
 						<TableCell align='center'>{product.buyingPoint}</TableCell>
 						<TableCell align='center'>{product.date}</TableCell>
+						<TableCell align='center' sx={{ width: "150px", height: "150px" }}>
+							<img
+								src={product.image || dummyProductImg}
+								alt='Product Image'
+								style={{ border: "1px solid #34495E", borderRadius: "2px" }}
+							/>
+						</TableCell>
 						<TableCell align='right' sx={{ paddingRight: 0 }}>
 							<Stack spacing={1}>
 								<Button
