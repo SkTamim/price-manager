@@ -52,10 +52,28 @@ const ProductTableRow = () => {
 	return (
 		<>
 			{dataIsLoading && (
-				<Box sx={{ width: "100%", height: "60vh" }} component='tr'>
-					<td colSpan='8' align='center'>
+				<Box
+					sx={{
+						width: "100%",
+						height: "400px",
+						position: "relative",
+					}}
+					component='tr'
+				>
+					<TableCell
+						sx={{
+							position: "absolute",
+							top: "50%",
+							transform: "translate(-50%, -50%)",
+							left: {
+								xs: "17%",
+								sm: "30%",
+								md: "50%",
+							},
+						}}
+					>
 						<Loading size={100} thickness={1} />
-					</td>
+					</TableCell>
 				</Box>
 			)}
 			{!dataIsLoading &&
