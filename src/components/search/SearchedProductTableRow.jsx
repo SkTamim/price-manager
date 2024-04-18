@@ -5,13 +5,10 @@ import { Edit, History } from "@mui/icons-material";
 import { useState } from "react";
 import ProductEditModal from "../products/ProductEditModal";
 import { Link } from "react-router-dom";
-import Loading from "../UI/Loading";
 
 //Firebase
 import { database } from "../../firebase/FirebaseConfig";
 import { collection, getDocs, query, where } from "firebase/firestore";
-
-const q = query(collection(database, "products"));
 
 const SearchedProductTableRow = ({ searchedData }) => {
 	const [editData, setEditData] = useState(null);
