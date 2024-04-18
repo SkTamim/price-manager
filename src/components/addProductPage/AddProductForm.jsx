@@ -169,7 +169,6 @@ function AddProductForm() {
 					id='buying-price'
 					label='Buying Price (₹)'
 					name='buyingPrice'
-					type='number'
 					variant='outlined'
 					fullWidth
 					sx={{ mt: 2 }}
@@ -182,7 +181,6 @@ function AddProductForm() {
 					id='selling-price'
 					label='Selling Price (₹)'
 					name='sellingPrice'
-					type='number'
 					variant='outlined'
 					fullWidth
 					sx={{ mt: 2 }}
