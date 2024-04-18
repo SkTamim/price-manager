@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import CircularProgress from "@mui/material/CircularProgress";
 
 function Loading({ size, thickness }) {

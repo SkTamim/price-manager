@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import {
 	Table,
 	TableBody,
@@ -7,8 +8,9 @@ import {
 	TableRow,
 } from "@mui/material";
 import ProductTableRow from "../products/ProductTableRow";
+import SearchedProductTableRow from "../search/SearchedProductTableRow";
 
-const ProductsTable = () => {
+const ProductsTable = ({ sharchedData, isSearched }) => {
 	return (
 		<TableContainer>
 			<Table sx={{ minWidth: 900 }} aria-label='simple table'>
@@ -26,7 +28,10 @@ const ProductsTable = () => {
 				</TableHead>
 
 				<TableBody>
-					<ProductTableRow />
+					{!isSearched && <ProductTableRow />}
+					{isSearched && (
+						<SearchedProductTableRow searchedData={sharchedData} />
+					)}
 				</TableBody>
 			</Table>
 		</TableContainer>
