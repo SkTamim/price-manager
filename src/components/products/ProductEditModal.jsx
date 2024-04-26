@@ -1,27 +1,38 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import { Alert, Box, TextField } from "@mui/material";
-import Loading from "../UI/Loading";
-import { updateProduct } from "./UpdateProduct";
+import {
+	Alert,
+	Box,
+	TextField,
+	Button,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
+} from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SaveIcon from "@mui/icons-material/Save";
+import Loading from "../UI/Loading";
+import { updateProduct } from "./UpdateProduct";
 
 export default function AlertDialog({ handleClose, open, editData }) {
 	const [editedData, setEditedData] = useState(null);
-	const [editSuccess, setEditSuccess] = useState(false);
-	const [successOpen, setSuccessOpen] = useState(false);
+	const [editFormError, setEditFormError] = useState({});
+
+	const [editDataSaving, setEditDataSaving] = useState(false);
+	const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
+	const [editSuccess, setEditSuccess] = useState({
+		status: false,
+		message: "Not yet submitted",
+	});
 
 	function handleSuccessClose() {
-		setSuccessOpen(false);
+		setFeedbackModalOpen(false);
 	}
 
 	useEffect(() => {
 		if (editData) {
+			// SETTING SAVED DATA IN DATABASE IN THE FORM
 			setEditedData({
 				id: editData.id,
 				name: editData.name,
@@ -29,28 +40,38 @@ export default function AlertDialog({ handleClose, open, editData }) {
 				sellingPrice: editData.sellingPrice,
 				buyingPoint: editData.buyingPoint,
 			});
+
+			// HANDLE FORM ERROR
+			setEditFormError({
+				name: editData.name.length <= 0,
+				buyingPrice: editData.buyingPrice.length <= 0,
+				sellingPrice: editData.sellingPrice.length <= 0,
+				buyingPoint: editData.buyingPoint.length <= 0,
+			});
 		}
 	}, [editData]);
 
 	function saveEdit() {
-		setEditSuccess(true);
-		const isSuccess = updateProduct(editedData);
-
-		isSuccess
-			.then((r) => {
-				setEditSuccess(!r);
+		setEditDataSaving(true);
+		updateProduct(editedData).then((result) => {
+			if (result.status) {
+				setEditSuccess(result);
 				handleClose();
-				setSuccessOpen(true);
-			})
-			.catch((err) => {
-				console.log(err);
-				setEditSuccess(false);
-				setSuccessOpen(true);
-			});
+				setFeedbackModalOpen(true);
+			} else {
+				setEditSuccess(result);
+				setFeedbackModalOpen(true);
+			}
+			setEditDataSaving(false);
+		});
 	}
 
 	function inputChengeHandler(e) {
 		setEditedData({ ...editedData, [e.target.name]: e.target.value });
+		setEditFormError({
+			...editFormError,
+			[e.target.name]: e.target.value <= 0,
+		});
 	}
 
 	return (
@@ -89,7 +110,7 @@ export default function AlertDialog({ handleClose, open, editData }) {
 								name='date'
 								sx={{ mt: 2, width: "100%" }}
 								label='Date (not editable)'
-								value={editData.date ? editData.date : ""}
+								value={new Date().toLocaleDateString()}
 								readOnly
 							/>
 							<TextField
@@ -101,6 +122,10 @@ export default function AlertDialog({ handleClose, open, editData }) {
 								value={editedData.name}
 								onChange={inputChengeHandler}
 								name='name'
+								error={editFormError.name}
+								helperText={
+									editFormError.name && "Product name should not be empty"
+								}
 							/>
 							<TextField
 								id='buying-price'
@@ -111,6 +136,11 @@ export default function AlertDialog({ handleClose, open, editData }) {
 								value={editedData.buyingPrice}
 								onChange={inputChengeHandler}
 								name='buyingPrice'
+								error={editFormError.buyingPrice}
+								helperText={
+									editFormError.buyingPrice &&
+									"Buying price should not be empty"
+								}
 							/>
 							<TextField
 								id='selling-price'
@@ -121,6 +151,11 @@ export default function AlertDialog({ handleClose, open, editData }) {
 								value={editedData.sellingPrice}
 								onChange={inputChengeHandler}
 								name='sellingPrice'
+								error={editFormError.sellingPrice}
+								helperText={
+									editFormError.sellingPrice &&
+									"Selling price should not be empty"
+								}
 							/>
 							<TextField
 								id='buying-point'
@@ -131,6 +166,11 @@ export default function AlertDialog({ handleClose, open, editData }) {
 								value={editedData.buyingPoint}
 								onChange={inputChengeHandler}
 								name='buyingPoint'
+								error={editFormError.buyingPoint}
+								helperText={
+									editFormError.buyingPoint &&
+									"Buying point should not be empty"
+								}
 							/>
 						</form>
 					)}
@@ -141,7 +181,7 @@ export default function AlertDialog({ handleClose, open, editData }) {
 					<LoadingButton
 						onClick={saveEdit}
 						endIcon={<SaveIcon />}
-						loading={editSuccess}
+						loading={editDataSaving}
 						loadingPosition='end'
 						variant='outlined'
 						autoFocus
@@ -152,7 +192,7 @@ export default function AlertDialog({ handleClose, open, editData }) {
 			</Dialog>
 
 			{/* EDIT SUCCESFULL DIALOG BOX */}
-			<Dialog open={successOpen} onClose={handleSuccessClose}>
+			<Dialog open={feedbackModalOpen} onClose={handleSuccessClose}>
 				<DialogContent
 					sx={{
 						p: 0,
@@ -161,9 +201,23 @@ export default function AlertDialog({ handleClose, open, editData }) {
 						},
 					}}
 				>
-					<Alert severity='success' sx={{ justifyContent: "center" }}>
-						Product updated successfully
-					</Alert>
+					{editSuccess.status ? (
+						<Alert
+							severity='success'
+							sx={{ justifyContent: "center", alignItems: "center" }}
+						>
+							<h4>Form Submitted</h4>
+							{editSuccess.message}
+						</Alert>
+					) : (
+						<Alert
+							severity='error'
+							sx={{ justifyContent: "center", alignItems: "center" }}
+						>
+							<h3>Form was not Submitted</h3>
+							{editSuccess.message}
+						</Alert>
+					)}
 				</DialogContent>
 				<DialogActions sx={{ p: 0 }}>
 					<Button
