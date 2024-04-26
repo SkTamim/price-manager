@@ -19,7 +19,7 @@ const PriceHistoryTable = () => {
 						<TableCell align='center'>Buying Price (₹)</TableCell>
 						<TableCell align='center'>Selling Price (₹)</TableCell>
 						<TableCell align='center'>Buying Point </TableCell>
-						<TableCell align='center'>Product Image</TableCell>
+						<TableCell align='center'> </TableCell>
 					</TableRow>
 				</TableHead>
 

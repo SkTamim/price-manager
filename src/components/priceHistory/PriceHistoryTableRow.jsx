@@ -1,5 +1,5 @@
-import { TableCell, TableRow } from "@mui/material";
-import kodal from "../../assets/images/kodal.webp";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { TableCell, TableRow, IconButton } from "@mui/material";
 
 const ProductTableRow = () => {
 	const rows = [1];
@@ -19,12 +19,10 @@ const ProductTableRow = () => {
 			<TableCell align='center'>220</TableCell>
 			<TableCell align='center'>350</TableCell>
 			<TableCell align='center'>Shiyakhala</TableCell>
-			<TableCell align='center' sx={{ width: "150px", height: "150px" }}>
-				<img
-					src={kodal}
-					alt='Product Image'
-					style={{ border: "1px solid #34495E", borderRadius: "2px" }}
-				/>
+			<TableCell align='center'>
+				<IconButton aria-label='delete' color='error' title='Delete Row'>
+					<DeleteIcon />
+				</IconButton>
 			</TableCell>
 		</TableRow>
 	));
