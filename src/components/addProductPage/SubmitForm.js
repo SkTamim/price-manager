@@ -1,3 +1,4 @@
+import Compressor from "compressorjs";
 import {
 	collection,
 	doc,
@@ -7,10 +8,10 @@ import {
 	query,
 	setDoc,
 } from "firebase/firestore";
-import { database, storage } from "../../firebase/FirebaseConfig";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import Compressor from "compressorjs";
 import { v4 } from "uuid";
+
+import { database, storage } from "../../firebase/FirebaseConfig";
 
 const databaseReference = collection(database, "products");
 
@@ -45,6 +46,7 @@ export function submitForm(data, isSuccess) {
 		});
 	};
 
+	// GETTING LAST ID OF PRODUCT FUNCTION
 	function getLastDataID() {
 		const initialQuery = query(
 			databaseReference,
@@ -54,6 +56,7 @@ export function submitForm(data, isSuccess) {
 
 		getDocs(initialQuery)
 			.then((response) => {
+				// IF DATABASE IS NOT EMPTY THEN TINCRIMENT THE 1 TO THE LAST ID AND SET DATA
 				if (!response.empty) {
 					let currentDataId = +response.docs[0].data().id + 1;
 					currentDataId = String(currentDataId);
@@ -90,8 +93,10 @@ export function submitForm(data, isSuccess) {
 						addData(mainData);
 					}
 				} else {
+					// IF DATABASE IS EMPTY THEN SET THE ID 01 AND SUBMIT THE DATA
 					mainData = { ...data, id: "01" };
 
+					// IF THERE IS IMAGE AVAILABE THEN ADD THE IMAGE TO THE DATA
 					if (data.image.name) {
 						// Compress the image=============
 						new Compressor(data.image, {
@@ -109,6 +114,7 @@ export function submitForm(data, isSuccess) {
 							},
 						});
 					} else {
+						// IF THERE IS IMAGE NT AVAILABE THEN ADD THE DATA
 						addData(mainData);
 					}
 				}

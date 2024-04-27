@@ -1,10 +1,12 @@
-/* eslint-disable react/prop-types */
-import { Button, Stack, styled, ButtonGroup } from "@mui/material";
-import Input from "@mui/joy/Input";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useEffect, useRef, useState } from "react";
-import CaptureImage from "./CaptureImage";
+
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import Input from "@mui/joy/Input";
+/* eslint-disable react/prop-types */
+import { Button, ButtonGroup, Stack, styled } from "@mui/material";
+
+import CaptureImage from "./CaptureImage";
 
 const VisuallyHiddenInput = styled("input")({
 	clip: "rect(0 0 0 0)",
@@ -21,6 +23,7 @@ function AddImageInput({ getImage, resetImg }) {
 	const [uploadFile, setUploadFile] = useState(null);
 	const [imgFileName, setImgFileName] = useState("");
 
+	// RESET IMAGE UPLOAD FIELT
 	const fileInputRef = useRef();
 	function resetImage() {
 		if (resetImg) {
@@ -33,11 +36,13 @@ function AddImageInput({ getImage, resetImg }) {
 		resetImage();
 	}, [resetImg]);
 
+	// UPLOAD IMAGE FILE FUNCTION
 	function file(e) {
 		setUploadFile(e.target.files[0]);
 		setImgFileName(e.target.files[0].name);
 	}
 
+	// GET CAPTURED IMAGE AND SET FILE FUNCTION
 	function getCapturedFile(file) {
 		setUploadFile(file);
 		setImgFileName(file);

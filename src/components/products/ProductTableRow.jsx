@@ -1,23 +1,25 @@
-import { Box, Button, Stack, TableCell, TableRow } from "@mui/material";
-import dummyProductImg from "../../assets/images/product.png";
-import { Edit, History } from "@mui/icons-material";
+/* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
-import ProductEditModal from "../products/ProductEditModal";
+
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { Link } from "react-router-dom";
+
+import { Edit, History } from "@mui/icons-material";
+import { Box, Button, Stack, TableCell, TableRow } from "@mui/material";
+
+import dummyProductImg from "../../assets/images/product.png";
+import { database } from "../../firebase/FirebaseConfig";
+import ProductEditModal from "../products/ProductEditModal";
 import Loading from "../UI/Loading";
 
-//Firebase
-import { database } from "../../firebase/FirebaseConfig";
-import { collection, getDocs, query, where } from "firebase/firestore";
-
-const q = query(collection(database, "products"));
-
-const ProductTableRow = () => {
+const ProductTableRow = ({ searchedData, isSearched }) => {
 	const [data, setData] = useState([]);
-	const [editData, setEditData] = useState(null);
 
+	// GETTING PRODUCTS DATA FORM FIREBASE
 	async function getData() {
-		const querySnapshot = await getDocs(q);
+		const querySnapshot = await getDocs(
+			query(collection(database, "products"))
+		);
 		let dataArr = [];
 		querySnapshot.forEach((doc) => {
 			dataArr.push(doc.data());
@@ -25,6 +27,26 @@ const ProductTableRow = () => {
 		setData(dataArr);
 	}
 
+	useEffect(() => {
+		if (isSearched) {
+			setData(searchedData);
+		} else {
+			getData();
+		}
+	}, [isSearched, searchedData]);
+
+	// EDIT PRODUCT MODAL FETCH DATA, STATE AND EVENT HANDLERS
+	const [editData, setEditData] = useState(null);
+
+	const [openEditModal, setOpenEditModal] = useState(false);
+	const handleEditModalOpen = (id) => {
+		setOpenEditModal(true);
+		getDocument(id);
+	};
+	const handleEditModalClose = () => {
+		setOpenEditModal(false);
+	};
+	// GETTING EDIT DATA USING PRODUCT ID
 	async function getDocument(id) {
 		const q = query(collection(database, "products"), where("id", "==", id));
 		const querySnapshot = await getDocs(q);
@@ -32,20 +54,6 @@ const ProductTableRow = () => {
 			setEditData(doc.data());
 		});
 	}
-
-	useEffect(() => {
-		getData();
-	}, []);
-
-	// Edit modal state and event handlers
-	const [open, setOpen] = useState(false);
-	const handleEditModalOpen = (id) => {
-		setOpen(true);
-		getDocument(id);
-	};
-	const handleEditModalClose = () => {
-		setOpen(false);
-	};
 
 	let dataIsLoading = data.length <= 0;
 
@@ -140,8 +148,8 @@ const ProductTableRow = () => {
 				))}
 
 			<ProductEditModal
-				handleClose={handleEditModalClose}
-				open={open}
+				handleEditModalClose={handleEditModalClose}
+				openEditModal={openEditModal}
 				editData={editData}
 			/>
 		</>

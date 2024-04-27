@@ -1,34 +1,38 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
+
+import SaveIcon from "@mui/icons-material/Save";
+import LoadingButton from "@mui/lab/LoadingButton";
 import {
 	Alert,
 	Box,
-	TextField,
 	Button,
 	Dialog,
 	DialogActions,
 	DialogContent,
 	DialogTitle,
+	TextField,
 } from "@mui/material";
-import LoadingButton from "@mui/lab/LoadingButton";
-import SaveIcon from "@mui/icons-material/Save";
+
 import Loading from "../UI/Loading";
 import { updateProduct } from "./UpdateProduct";
 
-export default function AlertDialog({ handleClose, open, editData }) {
+export default function AlertDialog({
+	handleEditModalClose,
+	openEditModal,
+	editData,
+}) {
+	// EDITED DATA STATES
 	const [editedData, setEditedData] = useState(null);
 	const [editFormError, setEditFormError] = useState({});
 
+	// EDIT DATA FORM FEEDBACK STATES
 	const [editDataSaving, setEditDataSaving] = useState(false);
 	const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
 	const [editSuccess, setEditSuccess] = useState({
 		status: false,
 		message: "Not yet submitted",
 	});
-
-	function handleSuccessClose() {
-		setFeedbackModalOpen(false);
-	}
 
 	useEffect(() => {
 		if (editData) {
@@ -51,12 +55,13 @@ export default function AlertDialog({ handleClose, open, editData }) {
 		}
 	}, [editData]);
 
+	// SAVE AND UPDATE EDITED DTATA TO THE FIRBASE FUNCTION
 	function saveEdit() {
 		setEditDataSaving(true);
 		updateProduct(editedData).then((result) => {
 			if (result.status) {
 				setEditSuccess(result);
-				handleClose();
+				handleEditModalClose();
 				setFeedbackModalOpen(true);
 			} else {
 				setEditSuccess(result);
@@ -66,6 +71,7 @@ export default function AlertDialog({ handleClose, open, editData }) {
 		});
 	}
 
+	// EDIT FORM INPUT AND ERROR HANDLER FUNCTION
 	function inputChengeHandler(e) {
 		setEditedData({ ...editedData, [e.target.name]: e.target.value });
 		setEditFormError({
@@ -74,9 +80,14 @@ export default function AlertDialog({ handleClose, open, editData }) {
 		});
 	}
 
+	// FEEDBACK MODAL CLOSE FUNCTION
+	function closeFeedbackModal() {
+		setFeedbackModalOpen(false);
+	}
+
 	return (
 		<>
-			<Dialog open={open} onClose={handleClose}>
+			<Dialog open={openEditModal} onClose={handleEditModalClose}>
 				<DialogTitle textTransform='uppercase'>Edit Product</DialogTitle>
 
 				<DialogContent
@@ -177,7 +188,7 @@ export default function AlertDialog({ handleClose, open, editData }) {
 				</DialogContent>
 
 				<DialogActions>
-					<Button onClick={handleClose}>Cencel</Button>
+					<Button onClick={handleEditModalClose}>Cencel</Button>
 					<LoadingButton
 						onClick={saveEdit}
 						endIcon={<SaveIcon />}
@@ -191,8 +202,8 @@ export default function AlertDialog({ handleClose, open, editData }) {
 				</DialogActions>
 			</Dialog>
 
-			{/* EDIT SUCCESFULL DIALOG BOX */}
-			<Dialog open={feedbackModalOpen} onClose={handleSuccessClose}>
+			{/* EDIT SUCCESFULL OR NOT DIALOG BOX */}
+			<Dialog open={feedbackModalOpen} onClose={closeFeedbackModal}>
 				<DialogContent
 					sx={{
 						p: 0,
@@ -221,7 +232,7 @@ export default function AlertDialog({ handleClose, open, editData }) {
 				</DialogContent>
 				<DialogActions sx={{ p: 0 }}>
 					<Button
-						onClick={handleSuccessClose}
+						onClick={closeFeedbackModal}
 						autoFocus
 						fullWidth
 						color='success'

@@ -1,20 +1,28 @@
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import { Button } from "@mui/material";
-import { IconButton, Drawer } from "@mui/material";
+import { useState } from "react";
+
+import { Link, NavLink } from "react-router-dom";
+
 import MenuIcon from "@mui/icons-material/Menu";
+import {
+	AppBar,
+	Box,
+	Button,
+	Drawer,
+	IconButton,
+	List,
+	ListItem,
+	ListItemButton,
+	ListItemText,
+	Toolbar,
+} from "@mui/material";
 
 import logo from "../assets/images/logo light.svg";
-import { Link, NavLink } from "react-router-dom";
-import { useState } from "react";
-import { List, ListItem, ListItemText, ListItemButton } from "@mui/material";
 
 export default function SearchBar() {
-	const [open, setOpen] = useState(false);
+	const [openMobileMenu, setOpenMobileMenu] = useState(false);
 
 	const toggleDrawer = (newOpen) => () => {
-		setOpen(newOpen);
+		setOpenMobileMenu(newOpen);
 	};
 	return (
 		<AppBar
@@ -27,6 +35,7 @@ export default function SearchBar() {
 				},
 			}}
 		>
+			{/* DESKTOP MENU */}
 			<Toolbar
 				sx={{
 					alignItems: "center",
@@ -83,7 +92,13 @@ export default function SearchBar() {
 					<MenuIcon />
 				</IconButton>
 			</Toolbar>
-			<Drawer open={open} onClose={toggleDrawer(false)} anchor='right'>
+
+			{/* MOBILE DRAWER MENU  */}
+			<Drawer
+				open={openMobileMenu}
+				onClose={toggleDrawer(false)}
+				anchor='right'
+			>
 				<Box
 					sx={{ width: 200 }}
 					role='presentation'

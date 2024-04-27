@@ -1,14 +1,15 @@
 import {
+	addDoc,
 	collection,
 	doc,
 	getDocs,
 	query,
 	updateDoc,
 	where,
-	addDoc,
 } from "firebase/firestore";
-import { database } from "../../firebase/FirebaseConfig";
 import { isEqual } from "lodash";
+
+import { database } from "../../firebase/FirebaseConfig";
 
 // UPDATE DATA FUNCTION
 export const updateProduct = async (data) => {

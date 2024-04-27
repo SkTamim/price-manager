@@ -1,18 +1,21 @@
+import { useReducer, useState } from "react";
+
+import SendIcon from "@mui/icons-material/Send";
+import LoadingButton from "@mui/lab/LoadingButton";
 import {
-	TextField,
-	Container,
-	Button,
 	Alert,
+	Button,
+	Container,
 	Dialog,
 	DialogActions,
 	DialogContent,
+	TextField,
 } from "@mui/material";
-import AddImageInput from "./AddImageInput";
-import { useReducer, useState } from "react";
-import { submitForm } from "./SubmitForm";
-import SendIcon from "@mui/icons-material/Send";
-import LoadingButton from "@mui/lab/LoadingButton";
 
+import AddImageInput from "./AddImageInput";
+import { submitForm } from "./SubmitForm";
+
+// INITIAL FORM STATE
 const INITIAL_STATE = {
 	name: "",
 	buyingPrice: "",
@@ -21,6 +24,7 @@ const INITIAL_STATE = {
 	image: null,
 };
 
+// FORM REDUCER FUNCTON
 function formReducer(state, action) {
 	switch (action.type) {
 		case "CHENGE_INPUT":
@@ -42,32 +46,10 @@ function formReducer(state, action) {
 }
 
 function AddProductForm() {
-	// Form is not filled properly dialog box =====
-	const [open, setOpen] = useState(false);
-	const handleClickOpen = () => {
-		setOpen(true);
-	};
-
-	const handleClose = () => {
-		setOpen(false);
-	};
-	// End ===================
-
-	const [btnLoading, setBtnLoading] = useState(false);
-	const [success, setSuccess] = useState(false);
-
-	const [submitOpen, setSubmitOpen] = useState(false);
-	const handleSubmitClickOpen = () => {
-		setSubmitOpen(true);
-	};
-
-	const handleSubmitClose = () => {
-		setSubmitOpen(false);
-	};
-
 	const [state, dispatch] = useReducer(formReducer, INITIAL_STATE);
 	const [formError, setFormError] = useState({});
 
+	// FORM INPUT HANDLER FUNCTION
 	function handleChenge(e) {
 		dispatch({
 			type: "CHENGE_INPUT",
@@ -82,11 +64,24 @@ function AddProductForm() {
 		});
 	}
 
+	// RESET FORM FUCNTION
 	function resetForm() {
 		dispatch({ type: "RESET_INPUT" });
 	}
 
+	// Form is not filled properly dialog box ========
+	const [formErrorOpen, setformErrorOpen] = useState(false);
+	const openFormErrorModal = () => {
+		setformErrorOpen(true);
+	};
+	const closeFormErrorModal = () => {
+		setformErrorOpen(false);
+	};
+	// End =============================================
+
+	// WHEN TO RESET IMAGE DATA STATE
 	const [resetImage, setResetImage] = useState(false);
+	// GETTING IMAGE DATA FUNCTION
 	function getImage(img) {
 		dispatch({
 			type: "AAD_IMAGE",
@@ -95,14 +90,22 @@ function AddProductForm() {
 			},
 		});
 	}
+
+	// SUBMIT FORM SECTION
+	const [btnLoading, setBtnLoading] = useState(false);
+	const [submitModalOpen, setsubmitModalOpen] = useState(false);
+	const [success, setSuccess] = useState(false);
+
+	// SUBMIT FORM FUNCTION
 	function submitFormData(e) {
 		e.preventDefault();
 		setBtnLoading(true);
+
+		// CHECKIGN AND SETTING FORM DATA ERROR
 		let nameErr = state.name.length <= 0;
 		let bPriceErr = state.buyingPrice.length <= 0;
 		let sPriceErr = state.sellingPrice.length <= 0;
 		let bPointErr = state.buyingPoint.length <= 0;
-
 		setFormError({
 			name: nameErr,
 			buyingPrice: bPriceErr,
@@ -111,32 +114,44 @@ function AddProductForm() {
 		});
 
 		if (nameErr || bPriceErr || sPriceErr || bPointErr) {
-			handleClickOpen();
+			// IF ERROR THEN GIVE FEEDBACK
+			openFormErrorModal();
 			setBtnLoading(false);
 		} else {
+			// IF FORM IS OKEY THEN ADD CURRENT DATE TO THE DATA AND SUBMIT THE FORM
 			let date = new Date();
 			date = date.toLocaleDateString();
 			submitForm({ ...state, date: date }, isSuccess);
-			setResetImage(true);
 		}
 	}
+
+	// IF DATA ADDED SUCCESSFULLY THEN RESET FORM AND GIVE THE USER FEEDBACK, IF NOT THEN GIVE FEEDBACK FOR RESUBMIT
 	const isSuccess = (isSubmitted) => {
 		setSuccess(isSubmitted);
-		console.log(isSubmitted);
 		setBtnLoading(!isSubmitted);
+
 		if (isSubmitted === true) {
 			resetForm();
-			setResetImage(false);
+			setResetImage(true);
 			submitFeedback();
 		} else {
 			submitFeedback();
 		}
 	};
 
+	// GIVE FEEDBACK FUCNTION
 	function submitFeedback() {
 		handleSubmitClickOpen();
 		setBtnLoading(false);
 	}
+
+	const handleSubmitClickOpen = () => {
+		setsubmitModalOpen(true);
+	};
+
+	const submitModalClose = () => {
+		setsubmitModalOpen(false);
+	};
 
 	return (
 		<>
@@ -227,7 +242,7 @@ function AddProductForm() {
 			</Container>
 
 			{/* FORM IS NOT FILLED PROPERLY ERROR DIALOG BOX */}
-			<Dialog open={open} onClose={handleClose}>
+			<Dialog open={formErrorOpen} onClose={closeFormErrorModal}>
 				<DialogContent
 					sx={{
 						p: 0,
@@ -241,14 +256,19 @@ function AddProductForm() {
 					</Alert>
 				</DialogContent>
 				<DialogActions sx={{ p: 0 }}>
-					<Button onClick={handleClose} autoFocus fullWidth color='success'>
+					<Button
+						onClick={closeFormErrorModal}
+						autoFocus
+						fullWidth
+						color='success'
+					>
 						Okey
 					</Button>
 				</DialogActions>
 			</Dialog>
 
 			{/* FORM SUBMITTED DIALOG BOX */}
-			<Dialog open={submitOpen} onClose={handleSubmitClose}>
+			<Dialog open={submitModalOpen} onClose={submitModalClose}>
 				<DialogContent
 					sx={{
 						p: 0,
@@ -269,7 +289,7 @@ function AddProductForm() {
 				</DialogContent>
 				<DialogActions sx={{ p: 0 }}>
 					<Button
-						onClick={handleSubmitClose}
+						onClick={submitModalClose}
 						autoFocus
 						fullWidth
 						color='success'

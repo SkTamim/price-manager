@@ -1,19 +1,20 @@
-import { Typography } from "@mui/material";
-import ProductsTable from "../components/products/ProductsTable";
-import SearchBar from "../components/search/SearchBar";
 import { useState } from "react";
 
+import { Typography } from "@mui/material";
+
+import ProductsTable from "../components/products/ProductsTable";
+import SearchBar from "../components/search/SearchBar";
+
 function Products() {
+	// FOR SEARCH FUNCTIONALITY
 	const [searchedItems, setSearchedItems] = useState([]);
 	const [searched, setSearched] = useState(false);
 
-	console.log(searchedItems);
 	function getSearchedData(data) {
 		setSearchedItems(data);
 	}
 	function isSearched(isSearched) {
 		setSearched(isSearched);
-		console.log(isSearched);
 	}
 	return (
 		<>

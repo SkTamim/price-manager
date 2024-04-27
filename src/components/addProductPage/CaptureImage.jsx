@@ -1,20 +1,29 @@
+import { useRef, useState } from "react";
+
+import Webcam from "react-webcam";
+
 /* eslint-disable react/prop-types */
 import { CameraAlt, CameraswitchOutlined } from "@mui/icons-material";
 import {
 	Button,
 	Dialog,
-	DialogTitle,
-	DialogContent,
 	DialogActions,
+	DialogContent,
+	DialogTitle,
 } from "@mui/material";
-import { useRef, useState } from "react";
-import Webcam from "react-webcam";
 
 function CaptureImage({ getCapturedFile }) {
-	const [open, setOpen] = useState(false);
 	const [img, setImg] = useState(null);
-	const webcamRef = useRef(null);
 
+	// SETTING WEBCAM FOR CAPTURE IMAGE
+	const webcamRef = useRef(null);
+	const videoConstraints = {
+		width: 150,
+		height: 150,
+		facingMode: { exact: cameraFace },
+	};
+
+	// FLIP CAMEAR FUNCTIONALITY
 	const [cameraFace, setCameraFace] = useState("user");
 	function flipCamera() {
 		if (cameraFace == "user") {
@@ -24,29 +33,27 @@ function CaptureImage({ getCapturedFile }) {
 		}
 	}
 
-	const videoConstraints = {
-		width: 150,
-		height: 150,
-		facingMode: { exact: cameraFace },
-	};
-
+	// CAPTURE IMAGE AND SET THE IMAGE TO THE STATE
 	const capture = () => {
 		setImg(webcamRef.current.getScreenshot());
-	};
-
-	const handleClickOpen = () => {
-		setOpen(true);
-	};
-
-	const handleClose = () => {
-		setOpen(false);
 	};
 	function imgOkey() {
 		capture();
 
 		getCapturedFile(webcamRef.current.getScreenshot());
-		handleClose();
+		cameraModalClose();
 	}
+
+	// CAMERA MODAL
+	const [openCameraModal, setOpenCameraModal] = useState(false);
+
+	const handleOpenCameraModal = () => {
+		setOpenCameraModal(true);
+	};
+	const cameraModalClose = () => {
+		setOpenCameraModal(false);
+	};
+
 	return (
 		<>
 			<Button
@@ -61,13 +68,13 @@ function CaptureImage({ getCapturedFile }) {
 						backgroundColor: "#0F87FF",
 					},
 				}}
-				onClick={handleClickOpen}
+				onClick={handleOpenCameraModal}
 			>
 				Capture
 			</Button>
 			<Dialog
-				open={open}
-				onClose={handleClose}
+				open={openCameraModal}
+				onClose={cameraModalClose}
 				aria-labelledby='alert-dialog-title'
 				aria-describedby='alert-dialog-description'
 			>

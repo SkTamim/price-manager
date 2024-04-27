@@ -7,8 +7,8 @@ import {
 	TableHead,
 	TableRow,
 } from "@mui/material";
+
 import ProductTableRow from "../products/ProductTableRow";
-import SearchedProductTableRow from "../search/SearchedProductTableRow";
 
 const ProductsTable = ({ sharchedData, isSearched }) => {
 	return (
@@ -28,10 +28,10 @@ const ProductsTable = ({ sharchedData, isSearched }) => {
 				</TableHead>
 
 				<TableBody>
-					{!isSearched && <ProductTableRow />}
-					{isSearched && (
-						<SearchedProductTableRow searchedData={sharchedData} />
-					)}
+					<ProductTableRow
+						searchedData={sharchedData}
+						isSearched={isSearched}
+					/>
 				</TableBody>
 			</Table>
 		</TableContainer>

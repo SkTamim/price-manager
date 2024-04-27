@@ -1,8 +1,11 @@
+import { useState } from "react";
+
+import { collection, getDocs, query } from "firebase/firestore";
+
 /* eslint-disable react/prop-types */
 import { Search } from "@mui/icons-material";
 import { Button, Stack, TextField } from "@mui/material";
-import { collection, getDocs, query } from "firebase/firestore";
-import { useState } from "react";
+
 import { database } from "../../firebase/FirebaseConfig";
 
 function SearchBar({ getSearchedData, isSearched }) {
@@ -23,8 +26,8 @@ function SearchBar({ getSearchedData, isSearched }) {
 		isSearched(true);
 	}
 
-	// function searchItem(searchVal) {}
 	async function searchItem(searchVal) {
+		// GETTING DATA FORM FIREBASE
 		const q = query(collection(database, "products"));
 		const querySnapshot = await getDocs(q);
 		let data = [];
@@ -32,12 +35,13 @@ function SearchBar({ getSearchedData, isSearched }) {
 			data.push(doc.data());
 		});
 
+		// FILTERING DATA BASED OF THE SEARCH
 		let sharched = data.filter((item) => {
 			return item.name.includes(searchVal);
 		});
 
+		// SENDING SEARCHED ITEMS
 		getSearchedData(sharched);
-		console.log(sharched);
 	}
 
 	return (

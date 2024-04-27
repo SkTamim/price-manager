@@ -19,8 +19,6 @@ const PriceHistory = () => {
 							color: "#34495E",
 							borderColor: "#34495E !important",
 							borderRadius: "40px",
-							// position: "absolute",
-							// top: "25px",
 						}}
 						component={Link}
 						to='/products'
