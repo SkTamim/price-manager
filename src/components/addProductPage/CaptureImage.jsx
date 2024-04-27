@@ -15,14 +15,6 @@ import {
 function CaptureImage({ getCapturedFile }) {
 	const [img, setImg] = useState(null);
 
-	// SETTING WEBCAM FOR CAPTURE IMAGE
-	const webcamRef = useRef(null);
-	const videoConstraints = {
-		width: 150,
-		height: 150,
-		facingMode: { exact: cameraFace },
-	};
-
 	// FLIP CAMEAR FUNCTIONALITY
 	const [cameraFace, setCameraFace] = useState("user");
 	function flipCamera() {
@@ -32,6 +24,13 @@ function CaptureImage({ getCapturedFile }) {
 			setCameraFace("user");
 		}
 	}
+	// SETTING WEBCAM FOR CAPTURE IMAGE
+	const webcamRef = useRef(null);
+	const videoConstraints = {
+		width: 150,
+		height: 150,
+		facingMode: { exact: cameraFace },
+	};
 
 	// CAPTURE IMAGE AND SET THE IMAGE TO THE STATE
 	const capture = () => {
