@@ -9,31 +9,24 @@ import { Box, Button, Stack, TableCell, TableRow } from "@mui/material";
 
 import dummyProductImg from "../../assets/images/product.png";
 import { database } from "../../firebase/FirebaseConfig";
+import { useFetchData } from "../../hooks/useFetchData";
 import ProductEditModal from "../products/ProductEditModal";
+import ErrorUI from "../UI/ErrorUI";
 import Loading from "../UI/Loading";
 
 const ProductTableRow = ({ searchedData, isSearched }) => {
 	const [data, setData] = useState([]);
 
-	// GETTING PRODUCTS DATA FORM FIREBASE
-	async function getData() {
-		const querySnapshot = await getDocs(
-			query(collection(database, "products"))
-		);
-		let dataArr = [];
-		querySnapshot.forEach((doc) => {
-			dataArr.push(doc.data());
-		});
-		setData(dataArr);
-	}
+	// FEDTCHIGN DATA FORM FIREBASE USING CUSTOM HOOK
+	const [newData, isLoading, isError] = useFetchData("products");
 
 	useEffect(() => {
 		if (isSearched) {
 			setData(searchedData);
-		} else {
-			getData();
+			return;
 		}
-	}, [isSearched, searchedData]);
+		setData(newData);
+	}, [isSearched, searchedData, newData]);
 
 	// EDIT PRODUCT MODAL FETCH DATA, STATE AND EVENT HANDLERS
 	const [editData, setEditData] = useState(null);
@@ -55,11 +48,34 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 		});
 	}
 
-	let dataIsLoading = data.length <= 0;
-
 	return (
 		<>
-			{dataIsLoading && (
+			{isError && !isLoading && (
+				<Box
+					sx={{
+						width: "100%",
+						height: "400px",
+						position: "relative",
+					}}
+					component='tr'
+				>
+					<TableCell
+						sx={{
+							position: "absolute",
+							top: "50%",
+							transform: "translate(-50%, -50%)",
+							left: {
+								xs: "17%",
+								sm: "30%",
+								md: "50%",
+							},
+						}}
+					>
+						<ErrorUI />
+					</TableCell>
+				</Box>
+			)}
+			{isLoading && !isError && (
 				<Box
 					sx={{
 						width: "100%",
@@ -84,7 +100,8 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 					</TableCell>
 				</Box>
 			)}
-			{!dataIsLoading &&
+			{!isLoading &&
+				!isError &&
 				data.map((product) => (
 					<TableRow
 						key={product.id}
