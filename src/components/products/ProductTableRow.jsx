@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { Link } from "react-router-dom";
@@ -47,6 +47,9 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 			setEditData(doc.data());
 		});
 	}
+
+	// DELETE PRODUCT FUNCTIONALITY REF
+	const tableRowRef = useRef();
 
 	return (
 		<>
@@ -104,6 +107,7 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 				!isError &&
 				data.map((product) => (
 					<TableRow
+						ref={tableRowRef}
 						key={product.id}
 						sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
 					>
@@ -168,6 +172,7 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 				handleEditModalClose={handleEditModalClose}
 				openEditModal={openEditModal}
 				editData={editData}
+				tableRowRef={tableRowRef}
 			/>
 		</>
 	);
