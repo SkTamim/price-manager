@@ -33,10 +33,11 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 	const clickedRowRef = useRef(null);
 
 	const [openEditModal, setOpenEditModal] = useState(false);
-	const handleEditModalOpen = (id, e) => {
+	const handleEditModalOpen = (id, e, index) => {
 		setOpenEditModal(true);
 		getDocument(id);
 		clickedRowRef.current = e.target.closest("tr");
+		clickedRowRef.current.setAttribute("index", index);
 	};
 	const handleEditModalClose = () => {
 		setOpenEditModal(false);
@@ -48,6 +49,12 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 		querySnapshot.forEach((doc) => {
 			setEditData(doc.data());
 		});
+	}
+
+	// DATA UPDATED RE RENDER
+	function isUpdated(Udata) {
+		const index = Number(clickedRowRef.current.getAttribute("index"));
+		data[index] = Udata;
 	}
 
 	return (
@@ -145,7 +152,7 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 										},
 									}}
 									onClick={(e) => {
-										handleEditModalOpen(product.id, e);
+										handleEditModalOpen(product.id, e, index);
 									}}
 								>
 									Edit
@@ -172,6 +179,7 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 				openEditModal={openEditModal}
 				editData={editData}
 				clickedRowRef={clickedRowRef}
+				isUpdated={isUpdated}
 			/>
 		</>
 	);

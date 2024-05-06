@@ -23,6 +23,7 @@ export default function AlertDialog({
 	openEditModal,
 	editData,
 	clickedRowRef,
+	isUpdated,
 }) {
 	// EDITED DATA STATES
 	const [editedData, setEditedData] = useState(null);
@@ -60,6 +61,7 @@ export default function AlertDialog({
 	// SAVE AND UPDATE EDITED DTATA TO THE FIRBASE FUNCTION
 	function saveEdit() {
 		setEditDataSaving(true);
+
 		updateProduct(editedData).then((result) => {
 			if (result.status) {
 				setEditSuccess(result);
@@ -70,6 +72,7 @@ export default function AlertDialog({
 				setFeedbackModalOpen(true);
 			}
 			setEditDataSaving(false);
+			isUpdated(editedData);
 		});
 	}
 
