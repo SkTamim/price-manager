@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { Link } from "react-router-dom";
@@ -30,11 +30,14 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 
 	// EDIT PRODUCT MODAL FETCH DATA, STATE AND EVENT HANDLERS
 	const [editData, setEditData] = useState(null);
+	const clickedRowRef = useRef(null);
 
 	const [openEditModal, setOpenEditModal] = useState(false);
-	const handleEditModalOpen = (id) => {
+	const handleEditModalOpen = (id, e, index) => {
 		setOpenEditModal(true);
 		getDocument(id);
+		clickedRowRef.current = e.target.closest("tr");
+		clickedRowRef.current.setAttribute("index", index);
 	};
 	const handleEditModalClose = () => {
 		setOpenEditModal(false);
@@ -46,6 +49,12 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 		querySnapshot.forEach((doc) => {
 			setEditData(doc.data());
 		});
+	}
+
+	// DATA UPDATED RE RENDER
+	function isUpdated(Udata) {
+		const index = Number(clickedRowRef.current.getAttribute("index"));
+		data[index] = Udata;
 	}
 
 	return (
@@ -102,13 +111,14 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 			)}
 			{!isLoading &&
 				!isError &&
-				data.map((product) => (
+				data.map((product, index) => (
 					<TableRow
+						id={product.id}
 						key={product.id}
 						sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
 					>
 						<TableCell component='th' scope='row' sx={{ fontWeight: "bold" }}>
-							{product.id}
+							{index + 1}
 						</TableCell>
 
 						<TableCell
@@ -141,8 +151,8 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 											backgroundColor: "#0F87FF",
 										},
 									}}
-									onClick={() => {
-										handleEditModalOpen(product.id);
+									onClick={(e) => {
+										handleEditModalOpen(product.id, e, index);
 									}}
 								>
 									Edit
@@ -168,6 +178,8 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 				handleEditModalClose={handleEditModalClose}
 				openEditModal={openEditModal}
 				editData={editData}
+				clickedRowRef={clickedRowRef}
+				isUpdated={isUpdated}
 			/>
 		</>
 	);

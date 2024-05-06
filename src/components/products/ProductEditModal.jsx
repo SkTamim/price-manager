@@ -14,6 +14,7 @@ import {
 	TextField,
 } from "@mui/material";
 
+import { useDeleteItem } from "../../hooks/useDeleteItem";
 import Loading from "../UI/Loading";
 import { updateProduct } from "./UpdateProduct";
 
@@ -21,6 +22,8 @@ export default function AlertDialog({
 	handleEditModalClose,
 	openEditModal,
 	editData,
+	clickedRowRef,
+	isUpdated,
 }) {
 	// EDITED DATA STATES
 	const [editedData, setEditedData] = useState(null);
@@ -58,6 +61,7 @@ export default function AlertDialog({
 	// SAVE AND UPDATE EDITED DTATA TO THE FIRBASE FUNCTION
 	function saveEdit() {
 		setEditDataSaving(true);
+
 		updateProduct(editedData).then((result) => {
 			if (result.status) {
 				setEditSuccess(result);
@@ -68,6 +72,7 @@ export default function AlertDialog({
 				setFeedbackModalOpen(true);
 			}
 			setEditDataSaving(false);
+			isUpdated(editedData);
 		});
 	}
 
@@ -84,6 +89,27 @@ export default function AlertDialog({
 	function closeFeedbackModal() {
 		setFeedbackModalOpen(false);
 	}
+
+	// DELETE PRODUCT FUNCTION
+	const [deleteItem, deleteSuccess, deleteError] = useDeleteItem();
+	const [deleteProductModalOpen, setDeleteProductModalOpen] = useState(false);
+	const [deleteProductId, setDeleteProductId] = useState(null);
+	const [deletedAlert, setDeletedAlert] = useState(false);
+
+	function deletePorduct() {
+		deleteProductId && deleteItem("products", deleteProductId);
+	}
+	useEffect(() => {
+		if (deleteSuccess) {
+			clickedRowRef.current.style.display = "none";
+			setDeleteProductModalOpen(false);
+			handleEditModalClose();
+			setDeletedAlert(true);
+			setTimeout(() => {
+				setDeletedAlert(false);
+			}, 2000);
+		}
+	}, [deleteSuccess]);
 
 	return (
 		<>
@@ -187,18 +213,30 @@ export default function AlertDialog({
 					)}
 				</DialogContent>
 
-				<DialogActions>
-					<Button onClick={handleEditModalClose}>Cencel</Button>
-					<LoadingButton
-						onClick={saveEdit}
-						endIcon={<SaveIcon />}
-						loading={editDataSaving}
-						loadingPosition='end'
+				<DialogActions sx={{ justifyContent: "space-between" }}>
+					<Button
 						variant='outlined'
-						autoFocus
+						color='error'
+						onClick={() => {
+							setDeleteProductModalOpen(true);
+							setDeleteProductId(editData.id);
+						}}
 					>
-						<span>Save</span>
-					</LoadingButton>
+						Delete Product
+					</Button>
+					<div>
+						<Button onClick={handleEditModalClose}>Cencel</Button>
+						<LoadingButton
+							onClick={saveEdit}
+							endIcon={<SaveIcon />}
+							loading={editDataSaving}
+							loadingPosition='end'
+							variant='contained'
+							autoFocus
+						>
+							<span>Save</span>
+						</LoadingButton>
+					</div>
 				</DialogActions>
 			</Dialog>
 
@@ -241,6 +279,40 @@ export default function AlertDialog({
 					</Button>
 				</DialogActions>
 			</Dialog>
+
+			{/* DELETE PRODUCT OR NOT CONFIRM BOX */}
+			<Dialog
+				open={deleteProductModalOpen}
+				onClose={() => setDeleteProductModalOpen(false)}
+			>
+				<DialogContent>
+					{!deleteError && (
+						<h3>Are you sure you want to delete this product.</h3>
+					)}
+
+					{deleteError && <h3>Something went wrong,Porduct was not deleted</h3>}
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={() => setDeleteProductModalOpen(false)}>No</Button>
+					<Button
+						variant='contained'
+						color='error'
+						onClick={deletePorduct}
+						autoFocus
+					>
+						Yes
+					</Button>
+				</DialogActions>
+			</Dialog>
+
+			{/* PRODUCT DELETED ALERT */}
+			{deletedAlert && (
+				<tr style={{ position: "fixed", top: "30px" }}>
+					<Alert component='td' variant='filled' severity='success'>
+						The Product was deleted Succesfully
+					</Alert>
+				</tr>
+			)}
 		</>
 	);
 }
