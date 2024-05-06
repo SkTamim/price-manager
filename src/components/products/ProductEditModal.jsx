@@ -22,7 +22,7 @@ export default function AlertDialog({
 	handleEditModalClose,
 	openEditModal,
 	editData,
-	tableRowRef,
+	clickedRowRef,
 }) {
 	// EDITED DATA STATES
 	const [editedData, setEditedData] = useState(null);
@@ -98,7 +98,7 @@ export default function AlertDialog({
 	}
 	useEffect(() => {
 		if (deleteSuccess) {
-			tableRowRef.current.style.display = "none";
+			clickedRowRef.current.style.display = "none";
 			setDeleteProductModalOpen(false);
 			handleEditModalClose();
 			setDeletedAlert(true);

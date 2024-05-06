@@ -16,7 +16,7 @@ const ProductsTable = ({ sharchedData, isSearched }) => {
 			<Table sx={{ minWidth: 900 }} aria-label='simple table'>
 				<TableHead>
 					<TableRow>
-						<TableCell align='left'>ID No.</TableCell>
+						<TableCell align='left'>SL. No.</TableCell>
 						<TableCell align='center'>Product Name</TableCell>
 						<TableCell align='center'>Buying Price (₹)</TableCell>
 						<TableCell align='center'>Selling Price (₹)</TableCell>

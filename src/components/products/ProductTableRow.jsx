@@ -30,11 +30,13 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 
 	// EDIT PRODUCT MODAL FETCH DATA, STATE AND EVENT HANDLERS
 	const [editData, setEditData] = useState(null);
+	const clickedRowRef = useRef(null);
 
 	const [openEditModal, setOpenEditModal] = useState(false);
-	const handleEditModalOpen = (id) => {
+	const handleEditModalOpen = (id, e) => {
 		setOpenEditModal(true);
 		getDocument(id);
+		clickedRowRef.current = e.target.closest("tr");
 	};
 	const handleEditModalClose = () => {
 		setOpenEditModal(false);
@@ -47,9 +49,6 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 			setEditData(doc.data());
 		});
 	}
-
-	// DELETE PRODUCT FUNCTIONALITY REF
-	const tableRowRef = useRef();
 
 	return (
 		<>
@@ -105,14 +104,14 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 			)}
 			{!isLoading &&
 				!isError &&
-				data.map((product) => (
+				data.map((product, index) => (
 					<TableRow
-						ref={tableRowRef}
+						id={product.id}
 						key={product.id}
 						sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
 					>
 						<TableCell component='th' scope='row' sx={{ fontWeight: "bold" }}>
-							{product.id}
+							{index + 1}
 						</TableCell>
 
 						<TableCell
@@ -145,8 +144,8 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 											backgroundColor: "#0F87FF",
 										},
 									}}
-									onClick={() => {
-										handleEditModalOpen(product.id);
+									onClick={(e) => {
+										handleEditModalOpen(product.id, e);
 									}}
 								>
 									Edit
@@ -172,7 +171,7 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 				handleEditModalClose={handleEditModalClose}
 				openEditModal={openEditModal}
 				editData={editData}
-				tableRowRef={tableRowRef}
+				clickedRowRef={clickedRowRef}
 			/>
 		</>
 	);
