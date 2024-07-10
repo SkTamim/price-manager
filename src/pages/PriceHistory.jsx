@@ -1,7 +1,7 @@
-import { Button, Container, Stack, Typography } from "@mui/material";
-import PriceHistoryTable from "../components/priceHistory/PriceHistoryTable";
+import { Link, Outlet } from "react-router-dom";
+
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import { Link } from "react-router-dom";
+import { Button, Container, Stack, Typography } from "@mui/material";
 
 const PriceHistory = () => {
 	return (
@@ -41,19 +41,8 @@ const PriceHistory = () => {
 						Price History
 					</Typography>
 				</Stack>
-				<Typography
-					component='h4'
-					variant='h5'
-					align='center'
-					textTransform='uppercase'
-					fontWeight='bold'
-					className='font_bn'
-					marginTop='20px'
-				>
-					1.6 KG কোদাল
-				</Typography>
 
-				<PriceHistoryTable />
+				<Outlet />
 			</Container>
 		</>
 	);

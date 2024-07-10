@@ -6,6 +6,7 @@ import {
 	TableHead,
 	TableRow,
 } from "@mui/material";
+
 import PriceHistoryTableRow from "./PriceHistoryTableRow";
 
 const PriceHistoryTable = () => {
