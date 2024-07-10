@@ -165,7 +165,7 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 										borderColor: "#34495E",
 									}}
 									component={Link}
-									to='/price-history'
+									to={`/price-history/${product.id}`}
 								>
 									History
 								</Button>

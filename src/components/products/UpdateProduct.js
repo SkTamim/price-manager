@@ -8,6 +8,7 @@ import {
 	where,
 } from "firebase/firestore";
 import { isEqual } from "lodash";
+import { v4 } from "uuid";
 
 import { database } from "../../firebase/FirebaseConfig";
 
@@ -53,7 +54,11 @@ export const updateProduct = async (data) => {
 // Add main data to History page before updating the data
 async function addHistory(data) {
 	delete data.image;
-	await addDoc(collection(database, `products/${data.id}/history`), data);
+
+	await addDoc(collection(database, `products/${data.id}/history`), {
+		...data,
+		id: v4(),
+	});
 }
 
 async function getDocument(id) {
