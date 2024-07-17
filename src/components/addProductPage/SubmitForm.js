@@ -59,12 +59,12 @@ export function submitForm(data, isSuccess) {
 				// IF DATABASE IS NOT EMPTY THEN TINCRIMENT THE 1 TO THE LAST ID AND SET DATA
 				if (!response.empty) {
 					let currentDataId = +response.docs[0].data().id + 1;
-					currentDataId = String(currentDataId);
-					let checkZero =
-						currentDataId.includes(0) || currentDataId.length >= 2;
-					if (!checkZero) {
-						currentDataId = "0" + currentDataId;
-					}
+					// currentDataId = String(currentDataId);
+					// let checkZero =
+					// 	currentDataId.includes(0) || currentDataId.length >= 2;
+					// if (!checkZero) {
+					// 	currentDataId = "0" + currentDataId;
+					// }
 
 					mainData = { ...data, id: currentDataId };
 					if (data.image) {
