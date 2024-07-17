@@ -37,7 +37,8 @@ function SearchBar({ getSearchedData, isSearched }) {
 
 		// FILTERING DATA BASED OF THE SEARCH
 		let sharched = data.filter((item) => {
-			return item.name.includes(searchVal);
+			const regex = new RegExp(searchVal, "gi");
+			return item.name.match(regex);
 		});
 
 		// SENDING SEARCHED ITEMS
