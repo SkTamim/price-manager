@@ -120,7 +120,7 @@ function AddProductForm() {
 		} else {
 			// IF FORM IS OKEY THEN ADD CURRENT DATE TO THE DATA AND SUBMIT THE FORM
 			let date = new Date();
-			date = date.toLocaleDateString();
+			date = date.toLocaleDateString('en-IN');
 			submitForm({ ...state, date: date }, isSuccess);
 		}
 	}
