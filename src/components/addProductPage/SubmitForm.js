@@ -1,17 +1,24 @@
-import Compressor from "compressorjs";
+import Compressor from 'compressorjs';
 import {
-	collection,
-	doc,
-	getDocs,
-	limit,
-	orderBy,
-	query,
-	setDoc,
-} from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { v4 } from "uuid";
+  collection,
+  doc,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  setDoc,
+} from 'firebase/firestore';
+import {
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from 'firebase/storage';
+import { v4 } from 'uuid';
 
-import { database, storage } from "../../firebase/FirebaseConfig";
+import {
+  database,
+  storage,
+} from '../../firebase/FirebaseConfig';
 
 const databaseReference = collection(database, "products");
 
@@ -20,7 +27,19 @@ export function submitForm(data, isSuccess) {
 
 	// Add data to firebase
 	const addData = async (dataObject) => {
-		await setDoc(doc(database, "products", dataObject.id), dataObject);
+		const idConvertedToNumber = Number(dataObject.id);
+		console.log(idConvertedToNumber);
+		try {
+			await setDoc(doc(database, "products", dataObject.id), {
+				...dataObject,
+				id: idConvertedToNumber,
+			});
+		} catch (error) {
+			isSuccess(false);
+			throw new Error(
+				"Data not submitted, getting error from addData function : \n" + error
+			);
+		}
 
 		//Send Success massege
 		isSuccess(true);
@@ -59,14 +78,14 @@ export function submitForm(data, isSuccess) {
 				// IF DATABASE IS NOT EMPTY THEN TINCRIMENT THE 1 TO THE LAST ID AND SET DATA
 				if (!response.empty) {
 					let currentDataId = +response.docs[0].data().id + 1;
-					// currentDataId = String(currentDataId);
-					// let checkZero =
-					// 	currentDataId.includes(0) || currentDataId.length >= 2;
-					// if (!checkZero) {
-					// 	currentDataId = "0" + currentDataId;
-					// }
-
+					currentDataId = String(currentDataId);
+					let checkZero =
+						currentDataId.includes(0) || currentDataId.length >= 2;
+					if (!checkZero) {
+						currentDataId = "0" + currentDataId;
+					}
 					mainData = { ...data, id: currentDataId };
+					console.log(mainData);
 					if (data.image) {
 						if (data.image.name) {
 							// Compress the image=============
@@ -89,7 +108,7 @@ export function submitForm(data, isSuccess) {
 							addData(mainData);
 						}
 					} else {
-						mainData = { ...data, id: currentDataId };
+						// mainData = { ...data, id: currentDataId };
 						addData(mainData);
 					}
 				} else {
