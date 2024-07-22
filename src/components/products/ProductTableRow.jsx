@@ -1,24 +1,44 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useRef, useState } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { Link } from "react-router-dom";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+} from 'firebase/firestore';
+import { Link } from 'react-router-dom';
 
-import { Edit, History } from "@mui/icons-material";
-import { Box, Button, Stack, TableCell, TableRow } from "@mui/material";
+import {
+  Edit,
+  History,
+} from '@mui/icons-material';
+import {
+  Box,
+  Button,
+  Stack,
+  TableCell,
+  TableRow,
+} from '@mui/material';
 
-import dummyProductImg from "../../assets/images/product.png";
-import { database } from "../../firebase/FirebaseConfig";
-import { useFetchData } from "../../hooks/useFetchData";
-import ProductEditModal from "../products/ProductEditModal";
-import ErrorUI from "../UI/ErrorUI";
-import Loading from "../UI/Loading";
+import dummyProductImg from '../../assets/images/product.png';
+import { database } from '../../firebase/FirebaseConfig';
+import { useFetchData } from '../../hooks/useFetchData';
+import ProductEditModal from '../products/ProductEditModal';
+import ErrorUI from '../UI/ErrorUI';
+import Loading from '../UI/Loading';
 
 const ProductTableRow = ({ searchedData, isSearched }) => {
 	const [data, setData] = useState([]);
 
 	// FEDTCHIGN DATA FORM FIREBASE USING CUSTOM HOOK
-	const [newData, isLoading, isError] = useFetchData("products");
+	const [newData, isLoading, isError] = useFetchData(
+		"companies/sk-hardwares/products"
+	);
 
 	useEffect(() => {
 		if (isSearched) {
@@ -128,8 +148,24 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 						>
 							{product.name}
 						</TableCell>
-						<TableCell align='center'>{product.buyingPrice}</TableCell>
-						<TableCell align='center'>{product.sellingPrice}</TableCell>
+						<TableCell align='center' sx={{ position: "relative" }}>
+							{product.buyingPrice} / {product.buyingUnit}
+							<div
+								style={{
+									position: "absolute",
+									left: "20%",
+									bottom: "20px",
+									width: "max-content",
+								}}
+							>
+								{product.priceInfo && <strong>Additional Price Info : </strong>}
+								{product.priceInfo && product.priceInfo}
+							</div>
+						</TableCell>
+						<TableCell align='center'>
+							{product.sellingPrice} / {product.sellingUnit}
+						</TableCell>
+
 						<TableCell align='center'>{product.buyingPoint}</TableCell>
 						<TableCell align='center'>{product.date}</TableCell>
 						<TableCell align='center' sx={{ width: "150px", height: "150px" }}>
