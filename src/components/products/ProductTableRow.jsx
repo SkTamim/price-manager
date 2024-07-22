@@ -29,24 +29,17 @@ import dummyProductImg from '../../assets/images/product.png';
 import { database } from '../../firebase/FirebaseConfig';
 import { useFetchData } from '../../hooks/useFetchData';
 import ProductEditModal from '../products/ProductEditModal';
+import DataNotFound from '../UI/DataNotFound';
 import ErrorUI from '../UI/ErrorUI';
 import Loading from '../UI/Loading';
 
 const ProductTableRow = ({ searchedData, isSearched }) => {
 	const [data, setData] = useState([]);
 
-	// FEDTCHIGN DATA FORM FIREBASE USING CUSTOM HOOK
+	// FETCHIGN DATA FORM FIREBASE USING CUSTOM HOOK
 	const [newData, isLoading, isError] = useFetchData(
 		"companies/sk-hardwares/products"
 	);
-
-	useEffect(() => {
-		if (isSearched) {
-			setData(searchedData);
-			return;
-		}
-		setData(newData);
-	}, [isSearched, searchedData, newData]);
 
 	// EDIT PRODUCT MODAL FETCH DATA, STATE AND EVENT HANDLERS
 	const [editData, setEditData] = useState(null);
@@ -76,6 +69,17 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 		const index = Number(clickedRowRef.current.getAttribute("index"));
 		data[index] = Udata;
 	}
+
+	// SEARCH FUNCTIONALITY
+	useEffect(() => {
+		if (isSearched) {
+			setData(searchedData);
+			return;
+		}
+		setData(newData);
+	}, [isSearched, searchedData, newData]);
+
+	const searchedDataZero = isSearched && data.length <= 0;
 
 	return (
 		<>
@@ -209,6 +213,32 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 						</TableCell>
 					</TableRow>
 				))}
+
+			{searchedDataZero && (
+				<Box
+					sx={{
+						width: "100%",
+						height: "400px",
+						position: "relative",
+					}}
+					component='tr'
+				>
+					<TableCell
+						sx={{
+							position: "absolute",
+							top: "50%",
+							transform: "translate(-50%, -50%)",
+							left: {
+								xs: "17%",
+								sm: "30%",
+								md: "50%",
+							},
+						}}
+					>
+						<DataNotFound />
+					</TableCell>
+				</Box>
+			)}
 
 			<ProductEditModal
 				handleEditModalClose={handleEditModalClose}

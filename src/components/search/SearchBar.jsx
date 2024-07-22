@@ -1,12 +1,20 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import { collection, getDocs, query } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+} from 'firebase/firestore';
 
 /* eslint-disable react/prop-types */
-import { Search } from "@mui/icons-material";
-import { Button, Stack, TextField } from "@mui/material";
+import { Search } from '@mui/icons-material';
+import {
+  Button,
+  Stack,
+  TextField,
+} from '@mui/material';
 
-import { database } from "../../firebase/FirebaseConfig";
+import { database } from '../../firebase/FirebaseConfig';
 
 function SearchBar({ getSearchedData, isSearched }) {
 	const [searchValue, setSearchValue] = useState("");
@@ -28,7 +36,7 @@ function SearchBar({ getSearchedData, isSearched }) {
 
 	async function searchItem(searchVal) {
 		// GETTING DATA FORM FIREBASE
-		const q = query(collection(database, "products"));
+		const q = query(collection(database, "companies/sk-hardwares/products"));
 		const querySnapshot = await getDocs(q);
 		let data = [];
 		querySnapshot.forEach((doc) => {
