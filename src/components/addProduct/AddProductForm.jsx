@@ -1,26 +1,34 @@
-import { useReducer, useState } from "react";
-
-import SendIcon from "@mui/icons-material/Send";
-import LoadingButton from "@mui/lab/LoadingButton";
 import {
-	Alert,
-	Button,
-	Container,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	TextField,
-} from "@mui/material";
+  useCallback,
+  useReducer,
+  useState,
+} from 'react';
 
-import AddImageInput from "./AddImageInput";
-import { submitForm } from "./SubmitForm";
+import SendIcon from '@mui/icons-material/Send';
+import LoadingButton from '@mui/lab/LoadingButton';
+import {
+  Alert,
+  Button,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  Stack,
+} from '@mui/material';
+
+import AddImageInput from './AddImageInput';
+import InputField from './InputField';
+import UnitSelectBox from './UnitSelectBox';
 
 // INITIAL FORM STATE
 const INITIAL_STATE = {
 	name: "",
 	buyingPrice: "",
 	sellingPrice: "",
+	buyingUnit: "pic",
+	sellingUnit: "pic",
 	buyingPoint: "",
+	priceInfo: "",
 	image: null,
 };
 
@@ -82,14 +90,14 @@ function AddProductForm() {
 	// WHEN TO RESET IMAGE DATA STATE
 	const [resetImage, setResetImage] = useState(false);
 	// GETTING IMAGE DATA FUNCTION
-	function getImage(img) {
+	const getImage = useCallback((img) => {
 		dispatch({
 			type: "AAD_IMAGE",
 			payload: {
 				image: img,
 			},
 		});
-	}
+	}, []);
 
 	// SUBMIT FORM SECTION
 	const [btnLoading, setBtnLoading] = useState(false);
@@ -120,8 +128,10 @@ function AddProductForm() {
 		} else {
 			// IF FORM IS OKEY THEN ADD CURRENT DATE TO THE DATA AND SUBMIT THE FORM
 			let date = new Date();
-			date = date.toLocaleDateString('en-IN');
-			submitForm({ ...state, date: date }, isSuccess);
+			date = date.toLocaleDateString("en-IN");
+			// submitForm({ ...state, date: date }, isSuccess);
+			console.log({ ...state, date: date });
+			isSuccess(true);
 		}
 	}
 
@@ -155,6 +165,7 @@ function AddProductForm() {
 
 	return (
 		<>
+			{/* MAIN ADD PRODUCT FORM */}
 			<Container
 				maxWidth='md'
 				component='form'
@@ -168,55 +179,71 @@ function AddProductForm() {
 					},
 				}}
 			>
-				<TextField
+				<InputField
 					id='product-name'
-					label='Product Name'
-					name='name'
-					variant='outlined'
-					fullWidth
-					sx={{ mt: 2 }}
-					onChange={handleChenge}
-					value={state.name}
-					error={formError.name}
-					helperText={formError.name && "Please type a name"}
-				/>
-				<TextField
-					id='buying-price'
-					label='Buying Price (₹)'
-					name='buyingPrice'
-					variant='outlined'
-					fullWidth
-					sx={{ mt: 2 }}
-					onChange={handleChenge}
-					value={state.buyingPrice}
-					error={formError.buyingPrice}
-					helperText={formError.buyingPrice && "Please give a buying price"}
-				/>
-				<TextField
-					id='selling-price'
-					label='Selling Price (₹)'
-					name='sellingPrice'
-					variant='outlined'
-					fullWidth
-					sx={{ mt: 2 }}
-					onChange={handleChenge}
-					value={state.sellingPrice}
-					error={formError.sellingPrice}
-					helperText={formError.sellingPrice && "Please give a selling price"}
-				/>
-				<TextField
-					id='buying-point'
-					label='Buying Point'
-					name='buyingPoint'
-					variant='outlined'
-					fullWidth
-					sx={{ mt: 2 }}
-					onChange={handleChenge}
-					value={state.buyingPoint}
-					error={formError.buyingPoint}
-					helperText={formError.buyingPoint && "Please give a buying point"}
+					label='Product Name*'
+					accessKey='name'
+					handleChenge={handleChenge}
+					state={state}
+					formError={formError}
+					sx={{ width: "100%" }}
 				/>
 
+				<Stack direction='row' mt={2}>
+					<InputField
+						id='buying-price'
+						label='Buying Price (₹)*'
+						accessKey='buyingPrice'
+						type='number'
+						sx={{ width: "70%" }}
+						handleChenge={handleChenge}
+						state={state}
+						formError={formError}
+					/>
+					<UnitSelectBox
+						sx={{ width: "30%" }}
+						labelId='buying-unit'
+						accessKey='buyingUnit'
+						state={state}
+						handleChenge={handleChenge}
+					/>
+				</Stack>
+				<Stack direction='row' mt={2}>
+					<InputField
+						id='selling-price'
+						label='Selling Price (₹)*'
+						accessKey='sellingPrice'
+						sx={{ width: "70%" }}
+						type='number'
+						handleChenge={handleChenge}
+						state={state}
+						formError={formError}
+					/>
+					<UnitSelectBox
+						sx={{ width: "30%" }}
+						labelId='selling-unit'
+						accessKey='sellingUnit'
+						state={state}
+						handleChenge={handleChenge}
+					/>
+				</Stack>
+				<InputField
+					id='buying-point'
+					label='Buying Point*'
+					accessKey='buyingPoint'
+					sx={{ mt: 2, width: "100%" }}
+					handleChenge={handleChenge}
+					state={state}
+					formError={formError}
+				/>
+				<InputField
+					id='price-info'
+					label='Price Info (Optional)'
+					accessKey='priceInfo'
+					sx={{ mt: 2, width: "100%" }}
+					handleChenge={handleChenge}
+					state={state}
+				/>
 				<AddImageInput getImage={getImage} resetImg={resetImage} />
 				<LoadingButton
 					variant='contained'
