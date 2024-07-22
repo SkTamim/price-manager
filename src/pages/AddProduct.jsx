@@ -1,5 +1,7 @@
-import { Typography } from "@mui/material";
-import AddProductForm from "../components/addProductPage/AddProductForm";
+import { Typography } from '@mui/material';
+
+import AddProductForm from '../components/addProduct/AddProductForm';
+
 function AddProduct() {
 	return (
 		<>
