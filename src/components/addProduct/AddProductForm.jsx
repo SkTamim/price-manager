@@ -18,6 +18,7 @@ import {
 
 import AddImageInput from './AddImageInput';
 import InputField from './InputField';
+import { submitForm } from './SubmitForm';
 import UnitSelectBox from './UnitSelectBox';
 
 // INITIAL FORM STATE
@@ -29,7 +30,7 @@ const INITIAL_STATE = {
 	sellingUnit: "pic",
 	buyingPoint: "",
 	priceInfo: "",
-	image: null,
+	image: "",
 };
 
 // FORM REDUCER FUNCTON
@@ -129,9 +130,7 @@ function AddProductForm() {
 			// IF FORM IS OKEY THEN ADD CURRENT DATE TO THE DATA AND SUBMIT THE FORM
 			let date = new Date();
 			date = date.toLocaleDateString("en-IN");
-			// submitForm({ ...state, date: date }, isSuccess);
-			console.log({ ...state, date: date });
-			isSuccess(true);
+			submitForm({ ...state, date: date }, isSuccess);
 		}
 	}
 

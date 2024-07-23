@@ -20,20 +20,21 @@ import {
   storage,
 } from '../../firebase/FirebaseConfig';
 
-const databaseReference = collection(database, "products");
+const databaseReference = collection(
+	database,
+	"companies/sk-hardwares/products"
+);
 
 export function submitForm(data, isSuccess) {
 	let mainData;
 
 	// Add data to firebase
 	const addData = async (dataObject) => {
-		const idConvertedToNumber = Number(dataObject.id);
-		console.log(idConvertedToNumber);
 		try {
-			await setDoc(doc(database, "products", dataObject.id), {
-				...dataObject,
-				id: idConvertedToNumber,
-			});
+			await setDoc(
+				doc(database, "companies/sk-hardwares/products", String(dataObject.id)),
+				dataObject
+			);
 		} catch (error) {
 			isSuccess(false);
 			throw new Error(
@@ -47,7 +48,10 @@ export function submitForm(data, isSuccess) {
 
 	// Add image to firebase storage function_
 	const addImage = (image) => {
-		const filePathRef = ref(storage, `products/${image.name}${v4()}`);
+		const filePathRef = ref(
+			storage,
+			`/companies/sk-hardwares/products/${image.name}${v4()}`
+		);
 		uploadBytes(filePathRef, image).then(() => {
 			console.log("image uploaded");
 
@@ -77,15 +81,9 @@ export function submitForm(data, isSuccess) {
 			.then((response) => {
 				// IF DATABASE IS NOT EMPTY THEN TINCRIMENT THE 1 TO THE LAST ID AND SET DATA
 				if (!response.empty) {
-					let currentDataId = +response.docs[0].data().id + 1;
-					currentDataId = String(currentDataId);
-					let checkZero =
-						currentDataId.includes(0) || currentDataId.length >= 2;
-					if (!checkZero) {
-						currentDataId = "0" + currentDataId;
-					}
+					const currentDataId = response.docs[0].data().id + 1;
 					mainData = { ...data, id: currentDataId };
-					console.log(mainData);
+
 					if (data.image) {
 						if (data.image.name) {
 							// Compress the image=============
@@ -104,16 +102,14 @@ export function submitForm(data, isSuccess) {
 								},
 							});
 						} else {
-							mainData = { ...data, id: currentDataId };
 							addData(mainData);
 						}
 					} else {
-						// mainData = { ...data, id: currentDataId };
 						addData(mainData);
 					}
 				} else {
 					// IF DATABASE IS EMPTY THEN SET THE ID 01 AND SUBMIT THE DATA
-					mainData = { ...data, id: "01" };
+					mainData = { ...data, id: 1 };
 
 					// IF THERE IS IMAGE AVAILABE THEN ADD THE IMAGE TO THE DATA
 					if (data.image.name) {
@@ -133,7 +129,7 @@ export function submitForm(data, isSuccess) {
 							},
 						});
 					} else {
-						// IF THERE IS IMAGE NT AVAILABE THEN ADD THE DATA
+						// IF THERE IS IMAGE NOT AVAILABE THEN ADD THE DATA
 						addData(mainData);
 					}
 				}
