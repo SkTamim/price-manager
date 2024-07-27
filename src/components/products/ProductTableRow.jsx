@@ -1,37 +1,17 @@
 /* eslint-disable react/prop-types */
-import {
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { useEffect, useRef, useState } from "react";
 
-import {
-  collection,
-  getDocs,
-  query,
-  where,
-} from 'firebase/firestore';
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
-import {
-  Edit,
-  History,
-} from '@mui/icons-material';
-import {
-  Box,
-  Button,
-  Stack,
-  TableCell,
-  TableRow,
-} from '@mui/material';
+import { Edit, History } from "@mui/icons-material";
+import { Box, Button, Stack, TableCell, TableRow } from "@mui/material";
 
-import dummyProductImg from '../../assets/images/product.png';
-import { database } from '../../firebase/FirebaseConfig';
-import { useFetchData } from '../../hooks/useFetchData';
-import ProductEditModal from '../products/ProductEditModal';
-import DataNotFound from '../UI/DataNotFound';
-import ErrorUI from '../UI/ErrorUI';
-import Loading from '../UI/Loading';
+import dummyProductImg from "../../assets/images/product.png";
+import { useFetchData } from "../../hooks/useFetchData";
+import ProductEditModal from "../products/ProductEditModal";
+import DataNotFound from "../UI/DataNotFound";
+import ErrorUI from "../UI/ErrorUI";
+import Loading from "../UI/Loading";
 
 const ProductTableRow = ({ searchedData, isSearched }) => {
 	const [data, setData] = useState([]);
@@ -42,32 +22,18 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 	);
 
 	// EDIT PRODUCT MODAL FETCH DATA, STATE AND EVENT HANDLERS
-	const [editData, setEditData] = useState(null);
-	const clickedRowRef = useRef(null);
-
+	const [targetEditId, setTargetEditId] = useState(null);
 	const [openEditModal, setOpenEditModal] = useState(false);
-	const handleEditModalOpen = (id, e, index) => {
-		setOpenEditModal(true);
-		getDocument(id);
-		clickedRowRef.current = e.target.closest("tr");
-		clickedRowRef.current.setAttribute("index", index);
-	};
+
 	const handleEditModalClose = () => {
 		setOpenEditModal(false);
 	};
-	// GETTING EDIT DATA USING PRODUCT ID
-	async function getDocument(id) {
-		const q = query(collection(database, "products"), where("id", "==", id));
-		const querySnapshot = await getDocs(q);
-		querySnapshot.forEach((doc) => {
-			setEditData(doc.data());
-		});
-	}
 
 	// DATA UPDATED RE RENDER
-	function isUpdated(Udata) {
-		const index = Number(clickedRowRef.current.getAttribute("index"));
-		data[index] = Udata;
+	const clickedEditButtonRowRef = useRef(null);
+	function isUpdated(updatedData) {
+		const index = clickedEditButtonRowRef.current.getAttribute("index");
+		data[index] = updatedData;
 	}
 
 	// SEARCH FUNCTIONALITY
@@ -140,6 +106,7 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 						id={product.id}
 						key={product.id}
 						sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+						index={index}
 					>
 						<TableCell component='th' scope='row' sx={{ fontWeight: "bold" }}>
 							{index + 1}
@@ -192,7 +159,9 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 										},
 									}}
 									onClick={(e) => {
-										handleEditModalOpen(product.id, e, index);
+										setOpenEditModal(true);
+										setTargetEditId(e.target.closest("tr").id);
+										clickedEditButtonRowRef.current = e.target.closest("tr");
 									}}
 								>
 									Edit
@@ -243,9 +212,9 @@ const ProductTableRow = ({ searchedData, isSearched }) => {
 			<ProductEditModal
 				handleEditModalClose={handleEditModalClose}
 				openEditModal={openEditModal}
-				editData={editData}
-				clickedRowRef={clickedRowRef}
 				isUpdated={isUpdated}
+				targetEditId={targetEditId}
+				clickedEditButtonRowRef={clickedEditButtonRowRef}
 			/>
 		</>
 	);
