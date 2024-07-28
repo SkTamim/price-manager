@@ -27,7 +27,9 @@ import NothingToShow from '../UI/NothingToShow';
 
 const PriceHistoryTableRow = () => {
 	let { id } = useParams();
-	const [data, isLoading, isError] = useFetchData(`products/${id}/history`);
+	const [data, isLoading, isError] = useFetchData(
+		`/companies/sk-hardwares/histories/${id}/history-items`
+	);
 	const [historyData, setHistoryData] = useState([]);
 
 	useEffect(() => {
@@ -44,7 +46,10 @@ const PriceHistoryTableRow = () => {
 	const [deleteHistoryId, setDeleteHistoryId] = useState(null);
 
 	function deleteHistory(deleteId) {
-		deleteHistoryItem(`products/${id}/history`, deleteId);
+		deleteHistoryItem(
+			`/companies/sk-hardwares/histories/${id}/history-items`,
+			deleteId
+		);
 		setDeleteHistoryModalOpen(false);
 	}
 	useEffect(() => {
@@ -165,8 +170,30 @@ const PriceHistoryTableRow = () => {
 						<TableCell align='center' className='font_bn'>
 							{item.name}
 						</TableCell>
-						<TableCell align='center'>{item.buyingPrice}</TableCell>
-						<TableCell align='center'>{item.sellingPrice}</TableCell>
+						<TableCell
+							align='center'
+							sx={
+								item.priceInfo
+									? { py: 4, position: "relative" }
+									: { position: "relative" }
+							}
+						>
+							{item.buyingPrice} / {item.buyingUnit}
+							<div
+								style={{
+									position: "absolute",
+									left: "20%",
+									bottom: "7px",
+									width: "max-content",
+								}}
+							>
+								{item.priceInfo && <strong>Additional Price Info : </strong>}
+								{item.priceInfo && item.priceInfo}
+							</div>
+						</TableCell>
+						<TableCell align='center'>
+							{item.sellingPrice} / {item.sellingUnit}
+						</TableCell>
 						<TableCell align='center'>{item.buyingPoint}</TableCell>
 						<TableCell align='center'>
 							<IconButton

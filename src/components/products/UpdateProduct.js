@@ -1,30 +1,27 @@
 import {
-	addDoc,
-	collection,
-	doc,
-	getDocs,
-	query,
-	updateDoc,
-	where,
-} from "firebase/firestore";
-import { isEqual } from "lodash";
-import { v4 } from "uuid";
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  query,
+  serverTimestamp,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
+import { isEqual } from 'lodash';
+import { v4 } from 'uuid';
 
-import { database } from "../../firebase/FirebaseConfig";
+import { database } from '../../firebase/FirebaseConfig';
 
 // UPDATE DATA FUNCTION
-export const updateProduct = async (data) => {
-	// FETCHING DATA FROM FIREBASE AND COMPARING TO THE SUBMITTED DATA
-	let feedback = getDocument(data.id).then((result) => {
-		const newData = {
-			buyingPoint: result.buyingPoint,
-			buyingPrice: result.buyingPrice,
-			id: result.id,
-			name: result.name,
-			sellingPrice: result.sellingPrice,
-		};
+export const updateProduct = async (updatedData) => {
+	// FETCHING DATA FROM FIREBASE
+	let feedback = getDocument(updatedData.id).then((result) => {
+		// CREATING TWO NEW OBJECT FORM UPDATED DATA AND PREVIOUS DATA WITHOUT DATE FOR COMPARISON. BECAUSE DATE WILL BE CHANGED WITH UPDATE EVERY TIME
+		const newData = { ...updatedData, date: "" };
+		const oldData = { ...result, date: "" };
 
-		let compare = isEqual(newData, data);
+		let compare = isEqual(newData, oldData);
 		if (compare) {
 			return {
 				status: false,
@@ -32,15 +29,28 @@ export const updateProduct = async (data) => {
 					"Entred data is same as previous. If you want to update please change what you want to change",
 			};
 		} else {
+			// ADDING PERVIOUS DATA TO THE History
 			addHistory(result);
 
 			// IF DATA CHENGED THEN, UPDATING THE DATA
-			updateDoc(doc(database, "products", data.id), {
-				...data,
-				date: new Date().toLocaleDateString(),
-			});
-
-			return { status: true, message: "Data updated succesfully" };
+			try {
+				updateDoc(
+					doc(
+						database,
+						"companies/sk-hardwares/products",
+						String(updatedData.id)
+					),
+					updatedData
+				);
+				return { status: true, message: "Data updated succesfully!" };
+			} catch (err) {
+				console.log(err, "from updated product");
+				return {
+					status: false,
+					message:
+						"Something went wrong, data not updated...Please try again...",
+				};
+			}
 		}
 	});
 
@@ -52,17 +62,26 @@ export const updateProduct = async (data) => {
 };
 
 // Add main data to History page before updating the data
-async function addHistory(data) {
-	delete data.image;
-
-	await addDoc(collection(database, `products/${data.id}/history`), {
-		...data,
-		id: v4(),
-	});
+async function addHistory(oldData) {
+	delete oldData.image;
+	await addDoc(
+		collection(
+			database,
+			`companies/sk-hardwares/histories/${oldData.id}/history-items`
+		),
+		{
+			...oldData,
+			timestamp: serverTimestamp(),
+			id: v4(),
+		}
+	);
 }
 
 async function getDocument(id) {
-	const q = query(collection(database, "products"), where("id", "==", id));
+	const q = query(
+		collection(database, "companies/sk-hardwares/products"),
+		where("id", "==", Number(id))
+	);
 	const querySnapshot = await getDocs(q);
 	let data;
 	querySnapshot.forEach((doc) => {

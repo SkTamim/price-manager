@@ -1,24 +1,21 @@
-import {
-  useCallback,
-  useReducer,
-  useState,
-} from 'react';
+import { useCallback, useReducer, useState } from "react";
 
-import SendIcon from '@mui/icons-material/Send';
-import LoadingButton from '@mui/lab/LoadingButton';
+import SendIcon from "@mui/icons-material/Send";
+import LoadingButton from "@mui/lab/LoadingButton";
 import {
-  Alert,
-  Button,
-  Container,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  Stack,
-} from '@mui/material';
+	Alert,
+	Button,
+	Container,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	Stack,
+} from "@mui/material";
 
-import AddImageInput from './AddImageInput';
-import InputField from './InputField';
-import UnitSelectBox from './UnitSelectBox';
+import InputField from "../form/InputField";
+import UnitSelectBox from "../form/UnitSelectBox";
+import AddImageInput from "./AddImageInput";
+import { submitForm } from "./SubmitForm";
 
 // INITIAL FORM STATE
 const INITIAL_STATE = {
@@ -29,7 +26,7 @@ const INITIAL_STATE = {
 	sellingUnit: "pic",
 	buyingPoint: "",
 	priceInfo: "",
-	image: null,
+	image: "",
 };
 
 // FORM REDUCER FUNCTON
@@ -129,9 +126,7 @@ function AddProductForm() {
 			// IF FORM IS OKEY THEN ADD CURRENT DATE TO THE DATA AND SUBMIT THE FORM
 			let date = new Date();
 			date = date.toLocaleDateString("en-IN");
-			// submitForm({ ...state, date: date }, isSuccess);
-			console.log({ ...state, date: date });
-			isSuccess(true);
+			submitForm({ ...state, date: date }, isSuccess);
 		}
 	}
 
@@ -182,10 +177,10 @@ function AddProductForm() {
 				<InputField
 					id='product-name'
 					label='Product Name*'
-					accessKey='name'
-					handleChenge={handleChenge}
-					state={state}
-					formError={formError}
+					name='name'
+					onChange={handleChenge}
+					value={state.name}
+					error={formError.name}
 					sx={{ width: "100%" }}
 				/>
 
@@ -193,56 +188,56 @@ function AddProductForm() {
 					<InputField
 						id='buying-price'
 						label='Buying Price (₹)*'
-						accessKey='buyingPrice'
+						name='buyingPrice'
 						type='number'
 						sx={{ width: "70%" }}
-						handleChenge={handleChenge}
-						state={state}
-						formError={formError}
+						onChange={handleChenge}
+						value={state.buyingPrice}
+						error={formError.buyingPrice}
 					/>
 					<UnitSelectBox
 						sx={{ width: "30%" }}
 						labelId='buying-unit'
-						accessKey='buyingUnit'
-						state={state}
-						handleChenge={handleChenge}
+						name='buyingUnit'
+						value={state.buyingUnit}
+						onChange={handleChenge}
 					/>
 				</Stack>
 				<Stack direction='row' mt={2}>
 					<InputField
 						id='selling-price'
 						label='Selling Price (₹)*'
-						accessKey='sellingPrice'
+						name='sellingPrice'
 						sx={{ width: "70%" }}
 						type='number'
-						handleChenge={handleChenge}
-						state={state}
-						formError={formError}
+						onChange={handleChenge}
+						value={state.sellingPrice}
+						error={formError.sellingPrice}
 					/>
 					<UnitSelectBox
 						sx={{ width: "30%" }}
 						labelId='selling-unit'
-						accessKey='sellingUnit'
-						state={state}
-						handleChenge={handleChenge}
+						name='sellingUnit'
+						value={state.sellingUnit}
+						onChange={handleChenge}
 					/>
 				</Stack>
 				<InputField
 					id='buying-point'
 					label='Buying Point*'
-					accessKey='buyingPoint'
+					name='buyingPoint'
 					sx={{ mt: 2, width: "100%" }}
-					handleChenge={handleChenge}
-					state={state}
-					formError={formError}
+					onChange={handleChenge}
+					value={state.buyingPoint}
+					error={formError.buyingPoint}
 				/>
 				<InputField
 					id='price-info'
 					label='Price Info (Optional)'
-					accessKey='priceInfo'
+					name='priceInfo'
 					sx={{ mt: 2, width: "100%" }}
-					handleChenge={handleChenge}
-					state={state}
+					onChange={handleChenge}
+					value={state.priceInfo}
 				/>
 				<AddImageInput getImage={getImage} resetImg={resetImage} />
 				<LoadingButton

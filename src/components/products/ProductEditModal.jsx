@@ -1,6 +1,8 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 
+import { collection, getDocs, query, where } from "firebase/firestore";
+
 import SaveIcon from "@mui/icons-material/Save";
 import LoadingButton from "@mui/lab/LoadingButton";
 import {
@@ -11,23 +13,43 @@ import {
 	DialogActions,
 	DialogContent,
 	DialogTitle,
-	TextField,
 } from "@mui/material";
 
+import { database } from "../../firebase/FirebaseConfig";
 import { useDeleteItem } from "../../hooks/useDeleteItem";
+import InputField from "../form/InputField";
+import UnitSelectBox from "../form/UnitSelectBox";
 import Loading from "../UI/Loading";
 import { updateProduct } from "./UpdateProduct";
 
 export default function AlertDialog({
-	handleEditModalClose,
 	openEditModal,
-	editData,
-	clickedRowRef,
+	targetEditId,
+	handleEditModalClose,
 	isUpdated,
+	clickedEditButtonRowRef,
 }) {
 	// EDITED DATA STATES
 	const [editedData, setEditedData] = useState(null);
 	const [editFormError, setEditFormError] = useState({});
+
+	// GETTING EDIT DATA USING PRODUCT ID
+	async function getDocument(id) {
+		const q = query(
+			collection(database, "companies/sk-hardwares/products"),
+			where("id", "==", Number(id))
+		);
+		const querySnapshot = await getDocs(q);
+		querySnapshot.forEach((doc) => {
+			setEditedData({
+				...doc.data(),
+				date: new Date().toLocaleDateString("en-IN"),
+			});
+		});
+	}
+	useEffect(() => {
+		getDocument(targetEditId);
+	}, [targetEditId]);
 
 	// EDIT DATA FORM FEEDBACK STATES
 	const [editDataSaving, setEditDataSaving] = useState(false);
@@ -36,27 +58,6 @@ export default function AlertDialog({
 		status: false,
 		message: "Not yet submitted",
 	});
-
-	useEffect(() => {
-		if (editData) {
-			// SETTING SAVED DATA IN DATABASE IN THE FORM
-			setEditedData({
-				id: editData.id,
-				name: editData.name,
-				buyingPrice: editData.buyingPrice,
-				sellingPrice: editData.sellingPrice,
-				buyingPoint: editData.buyingPoint,
-			});
-
-			// HANDLE FORM ERROR
-			setEditFormError({
-				name: editData.name.length <= 0,
-				buyingPrice: editData.buyingPrice.length <= 0,
-				sellingPrice: editData.sellingPrice.length <= 0,
-				buyingPoint: editData.buyingPoint.length <= 0,
-			});
-		}
-	}, [editData]);
 
 	// SAVE AND UPDATE EDITED DTATA TO THE FIRBASE FUNCTION
 	function saveEdit() {
@@ -67,12 +68,12 @@ export default function AlertDialog({
 				setEditSuccess(result);
 				handleEditModalClose();
 				setFeedbackModalOpen(true);
+				isUpdated(editedData);
 			} else {
 				setEditSuccess(result);
 				setFeedbackModalOpen(true);
 			}
 			setEditDataSaving(false);
-			isUpdated(editedData);
 		});
 	}
 
@@ -93,15 +94,11 @@ export default function AlertDialog({
 	// DELETE PRODUCT FUNCTION
 	const [deleteItem, deleteSuccess, deleteError] = useDeleteItem();
 	const [deleteProductModalOpen, setDeleteProductModalOpen] = useState(false);
-	const [deleteProductId, setDeleteProductId] = useState(null);
 	const [deletedAlert, setDeletedAlert] = useState(false);
 
-	function deletePorduct() {
-		deleteProductId && deleteItem("products", deleteProductId);
-	}
 	useEffect(() => {
 		if (deleteSuccess) {
-			clickedRowRef.current.style.display = "none";
+			clickedEditButtonRowRef.current.style.display = "none";
 			setDeleteProductModalOpen(false);
 			handleEditModalClose();
 			setDeletedAlert(true);
@@ -109,7 +106,7 @@ export default function AlertDialog({
 				setDeletedAlert(false);
 			}, 2000);
 		}
-	}, [deleteSuccess]);
+	}, [deleteSuccess, handleEditModalClose, clickedEditButtonRowRef]);
 
 	return (
 		<>
@@ -132,82 +129,81 @@ export default function AlertDialog({
 					)}
 					{editedData && (
 						<form style={{ width: "100%" }}>
-							<TextField
+							<InputField
 								id='serial'
-								label='ID No. (not editable)'
-								variant='outlined'
-								fullWidth
+								label='ID No (not editable)'
 								readOnly
-								value={editData.id ? editData.id : ""}
+								value={editedData.id ? editedData.id : ""}
 								sx={{ mt: 2 }}
 							/>
 
-							<TextField
+							<InputField
 								id='date'
 								name='date'
 								sx={{ mt: 2, width: "100%" }}
 								label='Date (not editable)'
-								value={new Date().toLocaleDateString()}
+								value={editedData.date}
 								readOnly
 							/>
-							<TextField
+							<InputField
 								id='product-name'
-								label='Product Name'
-								variant='outlined'
-								fullWidth
+								label='Product Name*'
 								sx={{ mt: 2 }}
 								value={editedData.name}
 								onChange={inputChengeHandler}
 								name='name'
 								error={editFormError.name}
-								helperText={
-									editFormError.name && "Product name should not be empty"
-								}
 							/>
-							<TextField
+
+							<InputField
 								id='buying-price'
-								label='Buying Price (₹)'
-								variant='outlined'
-								fullWidth
+								label='Buying Price (₹)*'
 								sx={{ mt: 2 }}
 								value={editedData.buyingPrice}
 								onChange={inputChengeHandler}
 								name='buyingPrice'
 								error={editFormError.buyingPrice}
-								helperText={
-									editFormError.buyingPrice &&
-									"Buying price should not be empty"
-								}
 							/>
-							<TextField
+							<UnitSelectBox
+								sx={{ width: "100%", mt: 2 }}
+								labelId='edit-buy-unit'
+								name='buyingUnit'
+								value={editedData.buyingUnit}
+								onChange={inputChengeHandler}
+							/>
+							<InputField
 								id='selling-price'
-								label='Selling Price (₹)'
-								variant='outlined'
-								fullWidth
+								label='Selling Price (₹)*'
 								sx={{ mt: 2 }}
 								value={editedData.sellingPrice}
 								onChange={inputChengeHandler}
 								name='sellingPrice'
 								error={editFormError.sellingPrice}
-								helperText={
-									editFormError.sellingPrice &&
-									"Selling price should not be empty"
-								}
 							/>
-							<TextField
+							<UnitSelectBox
+								sx={{ width: "100%", mt: 2 }}
+								labelId='edit-sell-unit'
+								name='sellingUnit'
+								value={editedData.sellingUnit}
+								onChange={inputChengeHandler}
+							/>
+							<InputField
 								id='buying-point'
-								label='Buying Point'
-								variant='outlined'
-								fullWidth
+								label='Buying Point*'
 								sx={{ mt: 2 }}
 								value={editedData.buyingPoint}
 								onChange={inputChengeHandler}
 								name='buyingPoint'
 								error={editFormError.buyingPoint}
-								helperText={
-									editFormError.buyingPoint &&
-									"Buying point should not be empty"
-								}
+							/>
+							<InputField
+								id='price-info'
+								label='Price Info'
+								sx={{ mt: 2 }}
+								value={editedData.priceInfo}
+								onChange={inputChengeHandler}
+								name='priceInfo'
+								error={editFormError.priceInfo}
 							/>
 						</form>
 					)}
@@ -219,7 +215,6 @@ export default function AlertDialog({
 						color='error'
 						onClick={() => {
 							setDeleteProductModalOpen(true);
-							setDeleteProductId(editData.id);
 						}}
 					>
 						Delete Product
@@ -290,17 +285,29 @@ export default function AlertDialog({
 						<h3>Are you sure you want to delete this product.</h3>
 					)}
 
-					{deleteError && <h3>Something went wrong,Porduct was not deleted</h3>}
+					{deleteError && (
+						<h3 style={{ textAlign: "center" }}>
+							Something went wrong,Porduct was not deleted.
+							<br />
+							Try Again...
+						</h3>
+					)}
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={() => setDeleteProductModalOpen(false)}>No</Button>
 					<Button
 						variant='contained'
 						color='error'
-						onClick={deletePorduct}
+						onClick={() => {
+							deleteItem(
+								"companies/sk-hardwares/products",
+								Number(targetEditId)
+							);
+						}}
 						autoFocus
 					>
-						Yes
+						{!deleteError && "Yes"}
+						{deleteError && "Re-try"}
 					</Button>
 				</DialogActions>
 			</Dialog>

@@ -1,16 +1,22 @@
-import { useRef, useState } from "react";
+import {
+  useRef,
+  useState,
+} from 'react';
 
-import Webcam from "react-webcam";
+import Webcam from 'react-webcam';
 
 /* eslint-disable react/prop-types */
-import { CameraAlt, CameraswitchOutlined } from "@mui/icons-material";
 import {
-	Button,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogTitle,
-} from "@mui/material";
+  CameraAlt,
+  CameraswitchOutlined,
+} from '@mui/icons-material';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from '@mui/material';
 
 function CaptureImage({ getCapturedFile }) {
 	const [img, setImg] = useState(null);
@@ -34,13 +40,16 @@ function CaptureImage({ getCapturedFile }) {
 
 	// CAPTURE IMAGE AND SET THE IMAGE TO THE STATE
 	const capture = () => {
-		setImg(webcamRef.current.getScreenshot());
+		if (webcamRef.current.getScreenshot()) {
+			setImg(webcamRef.current.getScreenshot());
+		}
 	};
 	function imgOkey() {
-		capture();
-
-		getCapturedFile(webcamRef.current.getScreenshot());
-		cameraModalClose();
+		if (webcamRef.current.getScreenshot()) {
+			capture();
+			getCapturedFile(webcamRef.current.getScreenshot());
+			cameraModalClose();
+		}
 	}
 
 	// CAMERA MODAL

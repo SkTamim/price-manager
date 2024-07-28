@@ -1,12 +1,21 @@
-import { useEffect, useRef, useState } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import Input from "@mui/joy/Input";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import Input from '@mui/joy/Input';
 /* eslint-disable react/prop-types */
-import { Button, ButtonGroup, Stack, styled } from "@mui/material";
+import {
+  Button,
+  ButtonGroup,
+  Stack,
+  styled,
+} from '@mui/material';
 
-import CaptureImage from "./CaptureImage";
+import CaptureImage from './CaptureImage';
 
 const VisuallyHiddenInput = styled("input")({
 	clip: "rect(0 0 0 0)",

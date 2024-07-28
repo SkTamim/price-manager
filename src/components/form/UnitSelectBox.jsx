@@ -1,29 +1,22 @@
-/* eslint-disable react/prop-types */
-import {
-  useEffect,
-  useState,
-} from 'react';
+import { useEffect, useState } from "react";
+
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { PropTypes } from "prop-types";
 
 import {
-  doc,
-  getDoc,
-  setDoc,
-} from 'firebase/firestore';
+	Button,
+	FormControl,
+	InputLabel,
+	MenuItem,
+	Select,
+	Stack,
+	TextField,
+} from "@mui/material";
 
-import {
-  Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Stack,
-  TextField,
-} from '@mui/material';
-
-import { database } from '../../firebase/FirebaseConfig';
+import { database } from "../../firebase/FirebaseConfig";
 
 function UnitSelectBox(props) {
-	const { sx, labelId, accessKey, state, handleChenge } = props;
+	const { sx, labelId, name, value, onChange } = props;
 	const [unitValues, setUnitValues] = useState([]);
 
 	// GET UNIT VALUES FORM DATABASE
@@ -39,7 +32,7 @@ function UnitSelectBox(props) {
 	}
 	useEffect(() => {
 		getSelets();
-	}, [unitValues]);
+	}, []);
 
 	// ADD NEW UNIT VALUE TO DATABASE
 	const [newUnit, setNewUnit] = useState("");
@@ -71,22 +64,27 @@ function UnitSelectBox(props) {
 			<InputLabel id={labelId}>Unit</InputLabel>
 			<Select
 				labelId={labelId}
-				name={accessKey}
-				id={accessKey}
-				value={state[accessKey]}
+				name={name}
+				id={name}
+				value={unitValues.length > 0 ? value : ""}
 				label='Unit'
-				onChange={handleChenge}
+				onChange={onChange}
 			>
-				<MenuItem key='pic' value='pic' selected>
-					/ pic
-				</MenuItem>
 				{unitValues.map((item) => (
 					<MenuItem key={item} value={item}>
 						/ {item}
 					</MenuItem>
 				))}
-				<Stack sx={{ flexDirection: "row", mt: 1, alignItems: "start" }}>
+				<Stack
+					sx={{
+						flexDirection: "row",
+						mt: 1,
+						mx: 1,
+						alignItems: "start",
+					}}
+				>
 					<TextField
+						sx={{ width: "100%" }}
 						placeholder='Enter Unit name'
 						inputProps={{
 							style: {
@@ -110,5 +108,15 @@ function UnitSelectBox(props) {
 		</FormControl>
 	);
 }
+
+UnitSelectBox.propTypes = {
+	id: PropTypes.string,
+	labelId: PropTypes.string,
+	name: PropTypes.string,
+	onChange: PropTypes.func,
+	value: PropTypes.any.isRequired,
+	readOnly: PropTypes.bool,
+	sx: PropTypes.object,
+};
 
 export default UnitSelectBox;
