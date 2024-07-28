@@ -30,7 +30,10 @@ const PriceHistoryTable = () => {
 
 	// FETCH CURRENT PRICE ROW
 	async function fetchCurrent() {
-		const q = query(collection(database, "products"), where("id", "==", id));
+		const q = query(
+			collection(database, "companies/sk-hardwares/products"),
+			where("id", "==", Number(id))
+		);
 
 		const querySnapshot = await getDocs(q);
 		querySnapshot.forEach((doc) => {
@@ -69,11 +72,31 @@ const PriceHistoryTable = () => {
 							<TableCell align='center' className='font_bn'>
 								{currentPriceRow.name}
 							</TableCell>
-							<TableCell align='center'>
-								{currentPriceRow.buyingPrice}
+							<TableCell
+								align='center'
+								sx={
+									currentPriceRow.priceInfo
+										? { py: 4, position: "relative" }
+										: { position: "relative" }
+								}
+							>
+								{currentPriceRow.buyingPrice} / {currentPriceRow.buyingUnit}
+								<div
+									style={{
+										position: "absolute",
+										left: "20%",
+										bottom: "7px",
+										width: "max-content",
+									}}
+								>
+									{currentPriceRow.priceInfo && (
+										<strong>Additional Price Info : </strong>
+									)}
+									{currentPriceRow.priceInfo && currentPriceRow.priceInfo}
+								</div>
 							</TableCell>
 							<TableCell align='center'>
-								{currentPriceRow.sellingPrice}
+								{currentPriceRow.sellingPrice} / {currentPriceRow.sellingUnit}
 							</TableCell>
 							<TableCell align='center'>
 								{currentPriceRow.buyingPoint}

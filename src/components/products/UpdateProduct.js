@@ -1,16 +1,17 @@
 import {
-	addDoc,
-	collection,
-	doc,
-	getDocs,
-	query,
-	serverTimestamp,
-	updateDoc,
-	where,
-} from "firebase/firestore";
-import { isEqual } from "lodash";
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  query,
+  serverTimestamp,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
+import { isEqual } from 'lodash';
+import { v4 } from 'uuid';
 
-import { database } from "../../firebase/FirebaseConfig";
+import { database } from '../../firebase/FirebaseConfig';
 
 // UPDATE DATA FUNCTION
 export const updateProduct = async (updatedData) => {
@@ -71,6 +72,7 @@ async function addHistory(oldData) {
 		{
 			...oldData,
 			timestamp: serverTimestamp(),
+			id: v4(),
 		}
 	);
 }
