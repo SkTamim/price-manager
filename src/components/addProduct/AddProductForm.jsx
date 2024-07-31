@@ -12,6 +12,7 @@ import {
 	Stack,
 } from "@mui/material";
 
+import AddUnit from "../form/AddUnit";
 import InputField from "../form/InputField";
 import UnitSelectBox from "../form/UnitSelectBox";
 import AddImageInput from "./AddImageInput";
@@ -158,6 +159,19 @@ function AddProductForm() {
 		setsubmitModalOpen(false);
 	};
 
+	// ADD UNIT MODAL OPEN
+	const [openModal, setOpenModal] = useState(false);
+	const [addUnitSuccess, setAddUnitSuccess] = useState(false);
+	const openAddUnitModal = () => {
+		setOpenModal(true);
+	};
+	const closeAddUnitModal = () => {
+		setOpenModal(false);
+	};
+	const isAddUnitSuccess = (success) => {
+		setAddUnitSuccess(success);
+	};
+
 	return (
 		<>
 			{/* MAIN ADD PRODUCT FORM */}
@@ -201,6 +215,8 @@ function AddProductForm() {
 						name='buyingUnit'
 						value={state.buyingUnit}
 						onChange={handleChenge}
+						openAddUnitModal={openAddUnitModal}
+						addUnitSuccess={addUnitSuccess && addUnitSuccess}
 					/>
 				</Stack>
 				<Stack direction='row' mt={2}>
@@ -220,6 +236,8 @@ function AddProductForm() {
 						name='sellingUnit'
 						value={state.sellingUnit}
 						onChange={handleChenge}
+						openAddUnitModal={openAddUnitModal}
+						addUnitSuccess={addUnitSuccess && addUnitSuccess}
 					/>
 				</Stack>
 				<InputField
@@ -320,6 +338,13 @@ function AddProductForm() {
 					</Button>
 				</DialogActions>
 			</Dialog>
+
+			{/* ADD UNIT DIALOG BOX */}
+			<AddUnit
+				openModal={openModal}
+				closeAddUnitModal={closeAddUnitModal}
+				isAddUnitSuccess={isAddUnitSuccess}
+			/>
 		</>
 	);
 }

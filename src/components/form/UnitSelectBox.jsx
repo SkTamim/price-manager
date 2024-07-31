@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { PropTypes } from "prop-types";
 
 import {
@@ -10,13 +10,20 @@ import {
 	MenuItem,
 	Select,
 	Stack,
-	TextField,
 } from "@mui/material";
 
 import { database } from "../../firebase/FirebaseConfig";
 
 function UnitSelectBox(props) {
-	const { sx, labelId, name, value, onChange } = props;
+	const {
+		sx,
+		labelId,
+		name,
+		value,
+		onChange,
+		openAddUnitModal,
+		addUnitSuccess,
+	} = props;
 	const [unitValues, setUnitValues] = useState([]);
 
 	// GET UNIT VALUES FORM DATABASE
@@ -32,32 +39,7 @@ function UnitSelectBox(props) {
 	}
 	useEffect(() => {
 		getSelets();
-	}, []);
-
-	// ADD NEW UNIT VALUE TO DATABASE
-	const [newUnit, setNewUnit] = useState("");
-	const [newUnitError, setNewUnitError] = useState(false);
-	function addNewUnit() {
-		if (unitValues.includes(newUnit)) {
-			setNewUnitError(true);
-			return;
-		}
-		if (newUnit.length < 1) {
-			setNewUnitError(true);
-			return;
-		}
-		const withNewData = [...unitValues, newUnit];
-		try {
-			setDoc(doc(database, "companies", "sk-hardwares"), {
-				["unit-selects"]: withNewData,
-			});
-			setNewUnit("");
-			setUnitValues(withNewData);
-		} catch (error) {
-			console.log(error + "form add new unit");
-			setNewUnitError(true);
-		}
-	}
+	}, [addUnitSuccess]);
 
 	return (
 		<FormControl sx={sx}>
@@ -83,25 +65,8 @@ function UnitSelectBox(props) {
 						alignItems: "start",
 					}}
 				>
-					<TextField
-						sx={{ width: "100%" }}
-						placeholder='Enter Unit name'
-						inputProps={{
-							style: {
-								padding: "6px 10px",
-							},
-						}}
-						variant='outlined'
-						value={newUnit}
-						onChange={(e) => {
-							setNewUnit(e.target.value);
-							setNewUnitError(false);
-						}}
-						error={newUnitError}
-						helperText={newUnitError && `New Unit not added, Please retry...`}
-					/>
-					<Button variant='outlined' onClick={addNewUnit}>
-						Add
+					<Button fullWidth variant='outlined' onClick={openAddUnitModal}>
+						Add new Unit
 					</Button>
 				</Stack>
 			</Select>
@@ -114,9 +79,11 @@ UnitSelectBox.propTypes = {
 	labelId: PropTypes.string,
 	name: PropTypes.string,
 	onChange: PropTypes.func,
-	value: PropTypes.any.isRequired,
+	value: PropTypes.any,
 	readOnly: PropTypes.bool,
 	sx: PropTypes.object,
+	openAddUnitModal: PropTypes.func,
+	addUnitSuccess: PropTypes.bool,
 };
 
 export default UnitSelectBox;
