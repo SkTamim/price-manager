@@ -17,6 +17,7 @@ import {
 
 import { database } from "../../firebase/FirebaseConfig";
 import { useDeleteItem } from "../../hooks/useDeleteItem";
+import AddUnit from "../form/AddUnit";
 import InputField from "../form/InputField";
 import UnitSelectBox from "../form/UnitSelectBox";
 import Loading from "../UI/Loading";
@@ -108,6 +109,19 @@ export default function AlertDialog({
 		}
 	}, [deleteSuccess, handleEditModalClose, clickedEditButtonRowRef]);
 
+	// ADD UNIT MODAL OPEN
+	const [openModal, setOpenModal] = useState(false);
+	const [addUnitSuccess, setAddUnitSuccess] = useState(false);
+	const openAddUnitModal = () => {
+		setOpenModal(true);
+	};
+	const closeAddUnitModal = () => {
+		setOpenModal(false);
+	};
+	const isAddUnitSuccess = (success) => {
+		setAddUnitSuccess(success);
+	};
+
 	return (
 		<>
 			<Dialog open={openEditModal} onClose={handleEditModalClose}>
@@ -170,6 +184,8 @@ export default function AlertDialog({
 								name='buyingUnit'
 								value={editedData.buyingUnit}
 								onChange={inputChengeHandler}
+								openAddUnitModal={openAddUnitModal}
+								addUnitSuccess={addUnitSuccess && addUnitSuccess}
 							/>
 							<InputField
 								id='selling-price'
@@ -186,6 +202,8 @@ export default function AlertDialog({
 								name='sellingUnit'
 								value={editedData.sellingUnit}
 								onChange={inputChengeHandler}
+								openAddUnitModal={openAddUnitModal}
+								addUnitSuccess={addUnitSuccess && addUnitSuccess}
 							/>
 							<InputField
 								id='buying-point'
@@ -311,6 +329,13 @@ export default function AlertDialog({
 					</Button>
 				</DialogActions>
 			</Dialog>
+
+			{/* ADD UNIT DIALOG BOX */}
+			<AddUnit
+				openModal={openModal}
+				closeAddUnitModal={closeAddUnitModal}
+				isAddUnitSuccess={isAddUnitSuccess}
+			/>
 
 			{/* PRODUCT DELETED ALERT */}
 			{deletedAlert && (
