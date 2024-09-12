@@ -1,23 +1,18 @@
-import { useState } from 'react';
-
-import {
-  collection,
-  getDocs,
-  query,
-} from 'firebase/firestore';
+import "bootstrap/dist/css/bootstrap.css";
 
 /* eslint-disable react/prop-types */
-import { Search } from '@mui/icons-material';
-import {
-  Button,
-  Stack,
-  TextField,
-} from '@mui/material';
+import { useState } from "react";
 
-import { database } from '../../firebase/FirebaseConfig';
+import { collection, getDocs, query } from "firebase/firestore";
+
+import { Checkbox, Stack, TextField } from "@mui/material";
+
+import { database } from "../../firebase/FirebaseConfig";
+import SearchWithBengali from "./SearchWithBengali";
 
 function SearchBar({ getSearchedData, isSearched }) {
 	const [searchValue, setSearchValue] = useState("");
+	const [bengaliCheck, setBengaliCheck] = useState(false);
 
 	function searchOnChengeHandler(e) {
 		setSearchValue(e.target.value);
@@ -55,22 +50,65 @@ function SearchBar({ getSearchedData, isSearched }) {
 
 	return (
 		<Stack
-			direction='row'
-			sx={{ py: 3, justifyContent: "center" }}
+			sx={{
+				py: 3,
+				justifyContent: "center",
+				flexDirection: "row",
+			}}
 			component='form'
 			onSubmit={searchSubmit}
 		>
-			<TextField
-				fullWidth
-				placeholder='Search products...'
-				className='font_bn'
-				sx={{ maxWidth: "800px" }}
-				value={searchValue}
-				onChange={searchOnChengeHandler}
-			/>
-			<Button variant='contained' sx={{ p: 0 }} type='submit'>
-				<Search sx={{ width: "30px", height: "30px" }} />
-			</Button>
+			{bengaliCheck ? (
+				<SearchWithBengali
+					getSearchedData={getSearchedData}
+					isSearched={isSearched}
+				/>
+			) : (
+				<TextField
+					fullWidth
+					placeholder='Search products...'
+					className='font_bn'
+					sx={{ maxWidth: "800px", borderRight: "none" }}
+					value={searchValue}
+					onChange={searchOnChengeHandler}
+				/>
+			)}
+
+			<label
+				style={{
+					border: "1px solid #949191a1",
+					borderRadius: "3px",
+					width: "65px",
+					display: "flex",
+					flexDirection: "column",
+					alignItems: "center",
+					justifyContent: "center",
+					cursor: "pointer",
+					userSelect: "none",
+				}}
+				htmlFor='bengaliCheck'
+			>
+				<Checkbox
+					sx={{ p: 0 }}
+					id='bengaliCheck'
+					checked={bengaliCheck}
+					onChange={() => {
+						setBengaliCheck((prev) => !prev);
+					}}
+				/>
+				<p
+					style={{
+						fontSize: "12px",
+						color: "rgba(0, 0, 0, 0.4)",
+						textAlign: "center",
+						padding: 0,
+						margin: 0,
+						lineHeight: "1",
+					}}
+				>
+					Bengali Transcript
+				</p>
+			</label>
 		</Stack>
 	);
 }
