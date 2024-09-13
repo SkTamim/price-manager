@@ -68,6 +68,17 @@ function AddProductForm() {
 			...formError,
 			[e.target.name]: e.target.value <= 0,
 		});
+
+		// MATCH SELLING UNIT WIHT BUYING UNIT
+		if (e.target.name == "buyingUnit") {
+			dispatch({
+				type: "CHENGE_INPUT",
+				payload: {
+					name: "sellingUnit",
+					value: e.target.value,
+				},
+			});
+		}
 	}
 
 	// RESET FORM FUCNTION
